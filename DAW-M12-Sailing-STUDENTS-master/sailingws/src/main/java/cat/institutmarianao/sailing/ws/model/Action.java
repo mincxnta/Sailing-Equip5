@@ -5,6 +5,7 @@ import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,7 +43,8 @@ public abstract class Action implements Serializable {
 
 	/* Validation */
 	/* JPA */
-	@Column
+	@Id
+	@Column // Si se llama igual lo podemos quitar?
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	protected Long id;

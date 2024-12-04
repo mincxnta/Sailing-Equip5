@@ -2,6 +2,8 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.io.Serializable;
 
+import org.springframework.data.annotation.Id;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -38,6 +40,7 @@ public abstract class User implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@Id
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	@Column
