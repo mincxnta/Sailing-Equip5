@@ -2,15 +2,25 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 
 /* Lombok */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING, columnDefinition = "varchar(31)")
 public abstract class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -30,13 +40,16 @@ public abstract class User implements Serializable {
 	/* JPA */
 	/* Lombok */
 	@EqualsAndHashCode.Include
+	@Column
 	protected String username;
 
 	/* Validation */
 	/* JPA */
+	@Column
 	protected String password;
 
 	/* Validation */
 	/* JPA */
+	@Column
 	protected Role role;
 }

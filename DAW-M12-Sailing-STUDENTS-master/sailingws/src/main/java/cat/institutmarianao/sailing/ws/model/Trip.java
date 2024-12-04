@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.hibernate.annotations.Formula;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -14,6 +17,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /* JPA annotations */
+@Entity
+@Table(name = "trips")
 /* Lombok */
 @Data
 @NoArgsConstructor
@@ -35,18 +40,22 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@Column
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	/* JSON */
 	private Long id;
 
 	/* JPA */
+	// TODO clave forania
 	private TripType type;
 
 	/* Validation */
 	/* JPA */
+	@Column(name = "client_username")
 	private Client client;
 
+	@Column
 	private int places;
 
 	/* Validation */
@@ -66,8 +75,10 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@Column
 	private Date date;
 
 	/* JPA */
+	@Column
 	private Date departure;
 }
