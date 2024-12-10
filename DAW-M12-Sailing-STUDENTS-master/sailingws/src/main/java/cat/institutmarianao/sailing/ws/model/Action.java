@@ -15,6 +15,8 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -64,23 +66,22 @@ public abstract class Action implements Serializable {
 	/* Lombok */
 	@NonNull
 	/* JPA */
-	@Column
+	@Column(insertable = false, updatable = false)
 	protected Type type;
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "performer_username")
 	@ManyToOne
 	@JoinColumn(name = "performer_username")
 	protected User performer;
 
 	/* JPA */
-	@Column(name = "new_date")
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
 	protected Date date = new Date();
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "trip_id")
 	@ManyToOne
 	@JoinColumn(name = "trip_id")
 	/* JSON */

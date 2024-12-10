@@ -55,14 +55,12 @@ public class Trip implements Serializable {
 	private Long id;
 
 	/* JPA */
-	@Column(name = "type_id")
 	@ManyToOne
 	@JoinColumn(name = "type_id")
 	private TripType type;
 
 	/* Validation */
 	/* JPA */
-	@Column(name = "client_username")
 	@ManyToOne
 	@JoinColumn(name = "client_username")
 	private Client client;
