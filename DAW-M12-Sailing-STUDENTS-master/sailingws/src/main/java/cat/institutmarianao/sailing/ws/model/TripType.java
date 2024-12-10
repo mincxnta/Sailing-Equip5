@@ -8,6 +8,10 @@ import org.springframework.data.annotation.Id;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,6 +38,7 @@ public class TripType implements Serializable {
 	/* Validation */
 	/* JPA */
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	@Column
@@ -46,6 +51,7 @@ public class TripType implements Serializable {
 	/* Validation */
 	/* JPA */
 	@Column
+	@Enumerated(EnumType.STRING)
 	private Category category;
 
 	/* Validation */

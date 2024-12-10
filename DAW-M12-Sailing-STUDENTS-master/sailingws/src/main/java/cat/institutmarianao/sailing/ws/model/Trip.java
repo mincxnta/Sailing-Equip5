@@ -8,7 +8,12 @@ import org.hibernate.annotations.Formula;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -42,6 +47,7 @@ public class Trip implements Serializable {
 	/* Validation */
 	/* JPA */
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
 	/* Lombok */
 	@EqualsAndHashCode.Include
@@ -49,12 +55,16 @@ public class Trip implements Serializable {
 	private Long id;
 
 	/* JPA */
-	// TODO clave forania
+	@Column(name = "type_id")
+	@ManyToOne
+	@JoinColumn(name = "type_id")
 	private TripType type;
 
 	/* Validation */
 	/* JPA */
 	@Column(name = "client_username")
+	@ManyToOne
+	@JoinColumn(name = "client_username")
 	private Client client;
 
 	@Column
@@ -62,6 +72,7 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@OneToMany
 	private List<@Valid Action> tracking;
 
 	/* JPA */

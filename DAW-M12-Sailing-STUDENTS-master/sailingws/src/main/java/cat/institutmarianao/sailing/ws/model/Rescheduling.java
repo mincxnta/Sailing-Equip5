@@ -2,12 +2,16 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.util.Date;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /* Validation */
 /* JPA annotations */
+@Entity
+@DiscriminatorValue("RESCHEDULING")
 /* Lombok */
 @Data
 @NoArgsConstructor
