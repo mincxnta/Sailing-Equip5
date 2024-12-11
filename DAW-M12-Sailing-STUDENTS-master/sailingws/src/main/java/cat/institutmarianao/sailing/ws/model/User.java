@@ -6,6 +6,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -21,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING, columnDefinition = "varchar(31)")
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -52,6 +54,7 @@ public abstract class User implements Serializable {
 
 	/* Validation */
 	/* JPA */
+	@Enumerated(value = EnumType.STRING)
 	@Column(insertable = false, updatable = false)
 	protected Role role;
 }

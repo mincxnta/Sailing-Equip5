@@ -8,6 +8,8 @@ import org.hibernate.annotations.Formula;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,6 +17,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -70,7 +74,7 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	/* JPA */
-	@OneToMany
+	@OneToMany(mappedBy = "trip")
 	private List<@Valid Action> tracking;
 
 	/* JPA */
@@ -82,14 +86,17 @@ public class Trip implements Serializable {
 			+ " WHERE last_action.trip_id=a.trip_id AND last_action.trip_id=id ))")
 	// Lombok
 	@Setter(AccessLevel.NONE)
+	@Enumerated(value = EnumType.STRING)
 	private Status status;
 
 	/* Validation */
 	/* JPA */
 	@Column
+	@Temporal(TemporalType.DATE)
 	private Date date;
 
 	/* JPA */
 	@Column
+	@Temporal(TemporalType.TIME)
 	private Date departure;
 }

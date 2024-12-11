@@ -1,8 +1,11 @@
 package cat.institutmarianao.sailing.ws.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import cat.institutmarianao.sailing.ws.service.TripService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +42,11 @@ import jakarta.validation.constraints.Positive;
 @SecurityRequirement(name = "Bearer Authentication")
 @Validated
 public class TripController {
+	@Autowired
+	private ConversionService conversionService;
+
+	@Autowired
+	private TripService tripService;
 
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
@@ -44,7 +54,15 @@ public class TripController {
 	@GetMapping(value = "/find/all")
 	public @ResponseBody List<TripDto> findAll() {
 		// TODO find all trips
-		return null;
+		List<Trip> trips = tripService.findAll();
+
+		List<TripDto> tripsDto = new ArrayList<>(trips.size());
+		for (Trip trip : trips) {
+			TripDto tripDto = conversionService.convert(trip, TripDto.class);
+			tripsDto.add(tripDto);
+		}
+
+		return tripsDto;
 	}
 
 	@Operation(summary = "Retrieve all trips by username", description = "Retrieve all trips by username from the database.")
