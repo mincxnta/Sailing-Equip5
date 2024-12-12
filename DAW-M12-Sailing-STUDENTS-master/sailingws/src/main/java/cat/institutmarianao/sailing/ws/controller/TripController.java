@@ -72,7 +72,13 @@ public class TripController {
 	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
 
 		// TODO find all trips by client username
+		List<Trip> trips = tripService.findAllByClientUsername(username);
 
+		List<TripDto> tripsDto = new ArrayList<>(trips.size());
+		for (Trip trip : trips) {
+			TripDto tripDto = conversionService.convert(trip, TripDto.class);
+			tripsDto.add(tripDto);
+		}
 		return null;
 	}
 
