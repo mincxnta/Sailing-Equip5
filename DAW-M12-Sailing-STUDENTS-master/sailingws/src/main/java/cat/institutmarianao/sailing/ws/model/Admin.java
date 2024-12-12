@@ -2,13 +2,16 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.io.Serializable;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /* JPA annotations */
+@Entity
 /* An employee is identified in the user table with role=EMPLOYEE */
-
+@DiscriminatorValue("ADMIN")
 /* Lombok */
 @Data
 @NoArgsConstructor

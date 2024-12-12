@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -78,8 +77,7 @@ public class UserController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
 	@GetMapping(value = "/find/all")
-	public @ResponseBody List<UserDto> findAll(@RequestParam(value = "roles", required = false) Role[] roles,
-			@RequestParam(value = "fullName", required = false) String fullName) {
+	public @ResponseBody List<UserDto> findAll() {
 
 		List<User> users = userService.findAll();
 
