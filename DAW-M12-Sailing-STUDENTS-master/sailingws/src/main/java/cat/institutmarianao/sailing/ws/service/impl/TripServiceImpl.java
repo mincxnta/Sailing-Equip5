@@ -33,8 +33,8 @@ public class TripServiceImpl implements TripService {
 		return tripRepository.findAllByClientUsername(username);
 	}
 
-	@Override
-	public TripDto save(TripDto tripDto) {
-		return tripRepository.save(tripDto);
-	}
+//	@Override
+//	public TripDto save(TripDto tripDto) {
+//		return tripRepository.save(tripDto);
+//	}
 }

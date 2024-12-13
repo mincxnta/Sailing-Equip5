@@ -23,6 +23,7 @@ import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import cat.institutmarianao.sailing.ws.service.ActionService;
 import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import cat.institutmarianao.sailing.ws.service.TripService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
@@ -53,7 +54,10 @@ public class TripController {
 	
 	@Autowired
 	private BookedPlaceService bookedPlaceService;
-
+	
+	@Autowired
+	private ActionService actionService;
+	
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
@@ -95,8 +99,8 @@ public class TripController {
 	@PostMapping(value = "/save")
 	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) {
 		// TODO Save the trip REVISAR QUE NOS HEMOS ADELANTADO
-		tripService.save(tripDto);
-		return tripDto;
+		//tripService.save(tripDto);
+		return null;
 	}
 
 	/* Swagger */
@@ -135,6 +139,7 @@ public class TripController {
 	@GetMapping("/find/tracking/by/id/{tripId}")
 	public Iterable<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
 		// TODO find the tracking of a trip
+//		return conversionService.convert(actionService.findTrackingByTripId(tripId), ActionDto.class);
 		return null;
 	}
 
