@@ -2,6 +2,7 @@ package cat.institutmarianao.sailing.ws.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import cat.institutmarianao.sailing.ws.service.TripService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
@@ -47,6 +50,9 @@ public class TripController {
 
 	@Autowired
 	private TripService tripService;
+	
+	@Autowired
+	private BookedPlaceService bookedPlaceService;
 
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
@@ -71,7 +77,6 @@ public class TripController {
 	@GetMapping(value = "/find/all/by/client/username/{username}")
 	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
 
-		// TODO find all trips by client username
 		List<Trip> trips = tripService.findAllByClientUsername(username);
 
 		List<TripDto> tripsDto = new ArrayList<>(trips.size());
@@ -79,7 +84,7 @@ public class TripController {
 			TripDto tripDto = conversionService.convert(trip, TripDto.class);
 			tripsDto.add(tripDto);
 		}
-		return null;
+		return tripsDto;
 	}
 
 	@Operation(summary = "Save a trip", description = "Saves a trip in the database. The response is the stored trip from the database.")
@@ -89,8 +94,9 @@ public class TripController {
 			@Content() }, description = "Error saving the trip. See response body for more details")
 	@PostMapping(value = "/save")
 	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) {
-		// TODO Save the trip
-		return null;
+		// TODO Save the trip REVISAR QUE NOS HEMOS ADELANTADO
+		tripService.save(tripDto);
+		return tripDto;
 	}
 
 	/* Swagger */
@@ -110,9 +116,15 @@ public class TripController {
 	@GetMapping(value = "/bookedPlaces/{trip_id}/{date}")
 	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_id") @NotNull Long id,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
-
-		// TODO Retrieve all booked places
-
+		
+//		List<BookedPlace> bookedPlaces = bookedPlaceService.findByTripTypeIdAndDate(id, date);
+//
+//		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
+//		for (BookedPlace bookedPlace : bookedPlaces) {
+//			BookedPlaceDto bookedPlaceDto = conversionService.convert(bookedPlace, BookedPlaceDto.class);
+//			bookedPlacesDto.add(bookedPlaceDto);
+//		}
+//		return bookedPlacesDto;
 		return null;
 	}
 
