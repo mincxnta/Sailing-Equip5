@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import cat.institutmarianao.sailing.ws.exception.NotFoundException;
+import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Client;
 import cat.institutmarianao.sailing.ws.model.Trip;
@@ -32,6 +33,7 @@ public class TripServiceImpl implements TripService {
 	public List<Trip> findAllByClientUsername(String username) {
 		return tripRepository.findAllByClientUsername(username);
 	}
+
 
 //	@Override
 //	public TripDto save(TripDto tripDto) {

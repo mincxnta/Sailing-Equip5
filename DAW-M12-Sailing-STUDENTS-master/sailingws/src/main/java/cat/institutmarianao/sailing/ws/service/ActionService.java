@@ -1,5 +1,7 @@
 package cat.institutmarianao.sailing.ws.service;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.PathVariable;
 
 import cat.institutmarianao.sailing.ws.model.Action;
@@ -8,6 +10,6 @@ import jakarta.validation.constraints.Positive;
 
 public interface ActionService {
 
-//	Iterable<Action> findTrackingByTripId(Long tripId);
+	List<Action> findByTripId(Long id);
 	
 }

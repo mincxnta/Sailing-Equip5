@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
@@ -121,15 +122,15 @@ public class TripController {
 	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_id") @NotNull Long id,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
 		
-//		List<BookedPlace> bookedPlaces = bookedPlaceService.findByTripTypeIdAndDate(id, date);
-//
-//		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
-//		for (BookedPlace bookedPlace : bookedPlaces) {
-//			BookedPlaceDto bookedPlaceDto = conversionService.convert(bookedPlace, BookedPlaceDto.class);
-//			bookedPlacesDto.add(bookedPlaceDto);
-//		}
-//		return bookedPlacesDto;
-		return null;
+		List<BookedPlace> bookedPlaces = bookedPlaceService.findByTripIdAndDate(id, date);
+
+		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
+		for (BookedPlace bookedPlace : bookedPlaces) {
+		BookedPlaceDto bookedPlaceDto = conversionService.convert(bookedPlace, BookedPlaceDto.class);
+			bookedPlacesDto.add(bookedPlaceDto);
+		}
+		return bookedPlacesDto;
+//		return null;
 	}
 
 	@Operation(summary = "Find tracking by trip id", description = "Gets the tracking of a trip by its id")
@@ -137,10 +138,20 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Tracking retrieved ok")
 
 	@GetMapping("/find/tracking/by/id/{tripId}")
-	public Iterable<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
+	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
 		// TODO find the tracking of a trip
-//		return conversionService.convert(actionService.findTrackingByTripId(tripId), ActionDto.class);
-		return null;
+		
+		List<Action> actions = actionService.findByTripId(tripId);
+
+		List<ActionDto> actionsDto = new ArrayList<>(actions.size());
+		for (Action action : actions) {
+			ActionDto actionDto = conversionService.convert(action, ActionDto.class);
+			actionsDto.add(actionDto);
+		}
+		return actionsDto;
+		
+
+
 	}
 
 }

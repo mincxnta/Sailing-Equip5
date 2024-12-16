@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
+import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
@@ -14,5 +15,4 @@ public interface TripService {
 	
 	List<Trip> findAllByClientUsername(String username);
 
-	//Trip save(Trip trip);
 }

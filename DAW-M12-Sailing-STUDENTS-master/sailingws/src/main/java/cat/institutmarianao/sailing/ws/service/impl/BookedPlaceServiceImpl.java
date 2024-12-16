@@ -18,8 +18,8 @@ public class BookedPlaceServiceImpl implements BookedPlaceService {
 	@Autowired
 	private BookedPlaceRepository bookedPlaceRepository;
 
-//	@Override
-//	public List<BookedPlace> findByTripTypeIdAndDate(Long id, Date date) {
-//		return bookedPlaceRepository.findByTripTypeIdAndDate(id, date);
-//	}
+	@Override
+	public List<BookedPlace> findByTripIdAndDate(Long id, Date date) {
+		return bookedPlaceRepository.findByTripIdAndDate(id, date);
+	}
 }
