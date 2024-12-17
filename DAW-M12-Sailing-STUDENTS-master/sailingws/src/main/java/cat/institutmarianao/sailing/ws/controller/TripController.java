@@ -121,8 +121,9 @@ public class TripController {
 	@GetMapping(value = "/bookedPlaces/{trip_id}/{date}")
 	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_id") @NotNull Long id,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
-		
-		List<BookedPlace> bookedPlaces = bookedPlaceService.findByTripIdAndDate(id, date);
+		Trip trip = tripService.findById(id);
+
+		List<BookedPlace> bookedPlaces = bookedPlaceService.findByIdTripTypeIdAndIdDate(trip.getType().getId(), date);
 
 		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
 		for (BookedPlace bookedPlace : bookedPlaces) {

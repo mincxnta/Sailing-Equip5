@@ -34,6 +34,11 @@ public class TripServiceImpl implements TripService {
 		return tripRepository.findAllByClientUsername(username);
 	}
 
+	@Override
+	public Trip findById(Long id) {
+		return tripRepository.findById(id).orElseThrow(NotFoundException::new);
+	}
+
 
 //	@Override
 //	public TripDto save(TripDto tripDto) {

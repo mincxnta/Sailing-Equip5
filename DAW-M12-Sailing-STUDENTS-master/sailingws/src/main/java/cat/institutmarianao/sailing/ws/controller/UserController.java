@@ -90,7 +90,7 @@ public class UserController {
 
 		return usersDto;
 	}
-
+//TODO "Type definition error: [simple type, class cat.institutmarianao.sailing.ws.model.dto.UserDto]"
 	@Operation(summary = "Save a user", description = "Saves a user in the database. The response is the stored user from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class)) }, description = "User saved ok")

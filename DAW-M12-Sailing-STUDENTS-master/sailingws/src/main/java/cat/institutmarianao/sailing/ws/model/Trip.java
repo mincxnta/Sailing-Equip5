@@ -20,6 +20,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,6 +53,7 @@ public class Trip implements Serializable {
 	}
 
 	/* Validation */
+	@NotBlank
 	/* JPA */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +69,7 @@ public class Trip implements Serializable {
 	private TripType type;
 
 	/* Validation */
+	@NotNull
 	/* JPA */
 	@ManyToOne
 	@JoinColumn(name = "client_username")
@@ -73,6 +79,7 @@ public class Trip implements Serializable {
 	private int places;
 
 	/* Validation */
+	@NotEmpty
 	/* JPA */
 	@OneToMany(mappedBy = "trip")
 	private List<@Valid Action> tracking;
@@ -90,6 +97,8 @@ public class Trip implements Serializable {
 	private Status status;
 
 	/* Validation */
+	@NotNull
+	@Future
 	/* JPA */
 	@Column
 	@Temporal(TemporalType.DATE)

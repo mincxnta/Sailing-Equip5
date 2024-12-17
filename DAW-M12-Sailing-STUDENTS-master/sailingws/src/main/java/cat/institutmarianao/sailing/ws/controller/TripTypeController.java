@@ -58,7 +58,7 @@ public class TripTypeController {
 	}
 
 	/* Swagger */
-	@Operation(summary = "Find all trip types")
+	@Operation(summary = "Find all trip types by category")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripType.class))) }, description = "Shipments retrieved ok")
 	/**/
@@ -110,7 +110,7 @@ public class TripTypeController {
 	}
 
 	/* Swagger */
-	@Operation(summary = "Get user by id")
+	@Operation(summary = "Get trip type by id")
 	@ApiResponse(responseCode = "200", description = "User retrieved ok")
 	@ApiResponse(responseCode = "404", description = "Resource not found")
 	

@@ -17,6 +17,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -40,6 +45,7 @@ public class TripType implements Serializable {
 	}
 
 	/* Validation */
+	@NotBlank
 	/* JPA */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,20 +55,24 @@ public class TripType implements Serializable {
 	private Long id;
 
 	/* Validation */
+	@NotBlank
 	@Column
 	private String title;
 
 	/* Validation */
+	@NotNull
 	/* JPA */
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Category category;
 
 	/* Validation */
+	@Max(value=255)
 	@Column
 	private String description;
 
 	/* Validation */
+	@Positive
 	@Column
 	private double price;
 
@@ -74,10 +84,12 @@ public class TripType implements Serializable {
 	private List<Date> departures;
 
 	/* Validation */
+	@Min(value=1)
 	@Column
 	private int duration;
 
 	/* Validation */
+	@Positive
 	/* JPA */
 	@Column(name = "max_places")
 	private int maxPlaces;

@@ -15,4 +15,5 @@ public interface TripService {
 	
 	List<Trip> findAllByClientUsername(String username);
 
+	Trip findById(Long id);
 }

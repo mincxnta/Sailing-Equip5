@@ -19,7 +19,7 @@ public class BookedPlaceServiceImpl implements BookedPlaceService {
 	private BookedPlaceRepository bookedPlaceRepository;
 
 	@Override
-	public List<BookedPlace> findByTripIdAndDate(Long id, Date date) {
-		return bookedPlaceRepository.findByTripIdAndDate(id, date);
+	public List<BookedPlace> findByIdTripTypeIdAndIdDate(Long tripTypeId, Date date) {
+		return bookedPlaceRepository.findByIdTripTypeIdAndIdDate(tripTypeId, date);
 	}
 }

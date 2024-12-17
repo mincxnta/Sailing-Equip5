@@ -8,5 +8,5 @@ import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.BookedPlaceCompositeId;
 
 public interface BookedPlaceRepository extends ViewRepository<BookedPlace, BookedPlaceCompositeId> {
-	List<BookedPlace> findByTripIdAndDate(Long id, Date date);
+	List<BookedPlace> findByIdTripTypeIdAndIdDate(Long tripTypeId, Date date);
 }

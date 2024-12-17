@@ -19,6 +19,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -56,6 +58,7 @@ public abstract class Action implements Serializable {
 	}
 
 	/* Validation */
+	@NotBlank
 	/* JPA */
 	@Id
 	@Column
@@ -65,6 +68,7 @@ public abstract class Action implements Serializable {
 	protected Long id;
 
 	/* Validation */
+	@NotNull
 	/* Lombok */
 	@NonNull
 	/* JPA */
@@ -73,6 +77,7 @@ public abstract class Action implements Serializable {
 	protected Type type;
 
 	/* Validation */
+	@NotNull
 	/* JPA */
 	@ManyToOne
 	@JoinColumn(name = "performer_username")
@@ -84,6 +89,7 @@ public abstract class Action implements Serializable {
 	protected Date date = new Date();
 
 	/* Validation */
+	@NotNull
 	/* JPA */
 	@ManyToOne
 	@JoinColumn(name = "trip_id")
