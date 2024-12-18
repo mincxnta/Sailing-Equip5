@@ -1,6 +1,7 @@
 package cat.institutmarianao.sailing.ws.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,9 +25,12 @@ import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
+import cat.institutmarianao.sailing.ws.model.User;
+import cat.institutmarianao.sailing.ws.model.User.Role;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import cat.institutmarianao.sailing.ws.model.dto.UserDto;
 import cat.institutmarianao.sailing.ws.service.ActionService;
 import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import cat.institutmarianao.sailing.ws.service.TripService;
@@ -98,10 +105,19 @@ public class TripController {
 	@ApiResponse(responseCode = "500", content = {
 			@Content() }, description = "Error saving the trip. See response body for more details")
 	@PostMapping(value = "/save")
-	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) {
-		// TODO Save the trip REVISAR QUE NOS HEMOS ADELANTADO
-		//tripService.save(tripDto);
-		return null;
+	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) throws Exception {
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+//
+//		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
+//			if (!userDto.getRole().equals(Role.CLIENT)) {
+//				throw new Exception("Clients only can create client accounts");
+//			}
+//		}
+		//TODO Hacer TripDtoToTripConverter
+
+		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)), TripDto.class);
+		//return null;
 	}
 
 	/* Swagger */
@@ -130,7 +146,6 @@ public class TripController {
 			bookedPlacesDto.add(bookedPlaceDto);
 		}
 		return bookedPlacesDto;
-//		return null;
 	}
 
 	@Operation(summary = "Find tracking by trip id", description = "Gets the tracking of a trip by its id")

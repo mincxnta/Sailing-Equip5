@@ -58,7 +58,7 @@ public abstract class Action implements Serializable {
 	}
 
 	/* Validation */
-	@NotBlank
+	@NotNull
 	/* JPA */
 	@Id
 	@Column
@@ -72,7 +72,7 @@ public abstract class Action implements Serializable {
 	/* Lombok */
 	@NonNull
 	/* JPA */
-	@Column(insertable = false, updatable = false)
+	@Column(name="type",insertable = false, updatable = false, nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	protected Type type;
 

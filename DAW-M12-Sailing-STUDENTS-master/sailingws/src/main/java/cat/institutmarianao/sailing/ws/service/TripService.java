@@ -8,6 +8,9 @@ import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public interface TripService {
@@ -16,4 +19,8 @@ public interface TripService {
 	List<Trip> findAllByClientUsername(String username);
 
 	Trip findById(Long id);
+
+	boolean existsById(@NotNull Long id);
+
+	Trip save(@NotNull @Valid Trip trip);
 }

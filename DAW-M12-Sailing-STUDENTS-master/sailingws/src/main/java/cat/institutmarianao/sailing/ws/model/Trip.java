@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.hibernate.annotations.Formula;
 
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripUpdate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,6 +26,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -53,7 +56,8 @@ public class Trip implements Serializable {
 	}
 
 	/* Validation */
-	@NotBlank
+	@NotNull(groups=OnTripUpdate.class)
+	@Null(groups=OnTripCreate.class)
 	/* JPA */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
