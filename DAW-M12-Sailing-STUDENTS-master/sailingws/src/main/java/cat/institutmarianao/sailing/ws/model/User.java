@@ -47,19 +47,17 @@ public abstract class User implements Serializable {
 	@Id
 	/* Lombok */
 	@EqualsAndHashCode.Include
-	@Column
 	protected String username;
 
 	/* Validation */
 	@NotBlank
 	/* JPA */
-	@Column
 	protected String password;
 
 	/* Validation */
 	@NotNull
 	/* JPA */
 	@Enumerated(value = EnumType.STRING)
-	@Column(insertable = false, updatable = false)
+	@Column(name="role",insertable = false, updatable = false, nullable = false)
 	protected Role role;
 }

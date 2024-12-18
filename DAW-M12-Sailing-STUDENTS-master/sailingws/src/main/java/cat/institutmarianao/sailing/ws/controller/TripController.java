@@ -118,12 +118,11 @@ public class TripController {
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TripDto.class)) }, description = "Booked places retrieved ok")
-	@GetMapping(value = "/bookedPlaces/{trip_id}/{date}")
-	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_id") @NotNull Long id,
+	@GetMapping(value = "/bookedPlaces/{trip_type_id}/{date}")
+	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_type_id") @NotNull Long tripTypeId,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
-		Trip trip = tripService.findById(id);
 
-		List<BookedPlace> bookedPlaces = bookedPlaceService.findByIdTripTypeIdAndIdDate(trip.getType().getId(), date);
+		List<BookedPlace> bookedPlaces = bookedPlaceService.findByIdTripTypeIdAndIdDate(tripTypeId, date);
 
 		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
 		for (BookedPlace bookedPlace : bookedPlaces) {

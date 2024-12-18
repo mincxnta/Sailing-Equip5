@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import cat.institutmarianao.sailing.ws.model.User;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,26 +27,30 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @JsonTypeInfo(
 	    use = JsonTypeInfo.Id.NAME, 
-	    include = JsonTypeInfo.As.PROPERTY, 
-	    property = "role")
+	    include = JsonTypeInfo.As.EXISTING_PROPERTY, 
+	    property = "role",
+	    visible = true)
 	@JsonSubTypes({
-	    @JsonSubTypes.Type(value = ClientDto.class, name = "CLIENT"),
-	    @JsonSubTypes.Type(value = AdminDto.class, name = "ADMIN")
+	    @JsonSubTypes.Type(value = ClientDto.class, name = User.CLIENT),
+	    @JsonSubTypes.Type(value = AdminDto.class, name = User.ADMIN)
 	})
 public abstract class UserDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/* Validation */
+	@NotBlank
 	/* Lombok */
 	@NonNull
 	@EqualsAndHashCode.Include
 	protected String username;
 
 	/* Validation */
+	@NotBlank
 	/* Lombok */
 	@NonNull
 	protected String password;
 
 	/* Validation */
+	@NotNull
 	protected User.Role role;
 }
