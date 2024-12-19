@@ -128,7 +128,7 @@ public class TripController {
 	@PostMapping("/save/action")
 	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) {
 		// TODO Save an action related to a trip
-		return null;
+		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)), ActionDto.class);
 	}
 
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
