@@ -1,12 +1,17 @@
 package cat.institutmarianao.sailing.ws.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +22,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.model.Action;
+import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
+import cat.institutmarianao.sailing.ws.model.User;
+import cat.institutmarianao.sailing.ws.model.User.Role;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
+import cat.institutmarianao.sailing.ws.model.dto.UserDto;
+import cat.institutmarianao.sailing.ws.service.ActionService;
+import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import cat.institutmarianao.sailing.ws.service.TripService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
@@ -47,7 +59,13 @@ public class TripController {
 
 	@Autowired
 	private TripService tripService;
-
+	
+	@Autowired
+	private BookedPlaceService bookedPlaceService;
+	
+	@Autowired
+	private ActionService actionService;
+	
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
@@ -71,9 +89,14 @@ public class TripController {
 	@GetMapping(value = "/find/all/by/client/username/{username}")
 	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
 
-		// TODO find all trips by client username
+		List<Trip> trips = tripService.findAllByClientUsername(username);
 
-		return null;
+		List<TripDto> tripsDto = new ArrayList<>(trips.size());
+		for (Trip trip : trips) {
+			TripDto tripDto = conversionService.convert(trip, TripDto.class);
+			tripsDto.add(tripDto);
+		}
+		return tripsDto;
 	}
 
 	@Operation(summary = "Save a trip", description = "Saves a trip in the database. The response is the stored trip from the database.")
@@ -82,9 +105,19 @@ public class TripController {
 	@ApiResponse(responseCode = "500", content = {
 			@Content() }, description = "Error saving the trip. See response body for more details")
 	@PostMapping(value = "/save")
-	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) {
-		// TODO Save the trip
-		return null;
+	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) throws Exception {
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+//
+//		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
+//			if (!userDto.getRole().equals(Role.CLIENT)) {
+//				throw new Exception("Clients only can create client accounts");
+//			}
+//		}
+		//TODO Hacer TripDtoToTripConverter
+
+		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)), TripDto.class);
+		//return null;
 	}
 
 	/* Swagger */
@@ -95,19 +128,24 @@ public class TripController {
 	@PostMapping("/save/action")
 	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) {
 		// TODO Save an action related to a trip
-		return null;
+		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)), ActionDto.class);
 	}
 
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TripDto.class)) }, description = "Booked places retrieved ok")
-	@GetMapping(value = "/bookedPlaces/{trip_id}/{date}")
-	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_id") @NotNull Long id,
+	@GetMapping(value = "/bookedPlaces/{trip_type_id}/{date}")
+	public List<BookedPlaceDto> bookedPlaces(@PathVariable("trip_type_id") @NotNull Long tripTypeId,
 			@PathVariable("date") @NotNull @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) @Parameter(description = SailingWsApplication.DATE_PATTERN) Date date) {
 
-		// TODO Retrieve all booked places
+		List<BookedPlace> bookedPlaces = bookedPlaceService.findByIdTripTypeIdAndIdDate(tripTypeId, date);
 
-		return null;
+		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
+		for (BookedPlace bookedPlace : bookedPlaces) {
+		BookedPlaceDto bookedPlaceDto = conversionService.convert(bookedPlace, BookedPlaceDto.class);
+			bookedPlacesDto.add(bookedPlaceDto);
+		}
+		return bookedPlacesDto;
 	}
 
 	@Operation(summary = "Find tracking by trip id", description = "Gets the tracking of a trip by its id")
@@ -115,9 +153,20 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Tracking retrieved ok")
 
 	@GetMapping("/find/tracking/by/id/{tripId}")
-	public Iterable<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
+	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
 		// TODO find the tracking of a trip
-		return null;
+		
+		List<Action> actions = actionService.findByTripId(tripId);
+
+		List<ActionDto> actionsDto = new ArrayList<>(actions.size());
+		for (Action action : actions) {
+			ActionDto actionDto = conversionService.convert(action, ActionDto.class);
+			actionsDto.add(actionDto);
+		}
+		return actionsDto;
+		
+
+
 	}
 
 }

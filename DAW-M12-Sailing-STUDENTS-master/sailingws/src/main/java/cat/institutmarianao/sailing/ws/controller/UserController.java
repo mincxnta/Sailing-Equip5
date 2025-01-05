@@ -76,6 +76,7 @@ public class UserController {
 	@Operation(summary = "Retrieve all users", description = "Retrieve all users from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
+	
 	@GetMapping(value = "/find/all")
 	public @ResponseBody List<UserDto> findAll() {
 
@@ -89,7 +90,6 @@ public class UserController {
 
 		return usersDto;
 	}
-
 	@Operation(summary = "Save a user", description = "Saves a user in the database. The response is the stored user from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class)) }, description = "User saved ok")
