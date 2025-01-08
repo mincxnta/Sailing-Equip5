@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
@@ -24,11 +26,12 @@ public class TripDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/* Validation */
-	@NotNull(groups=OnTripUpdate.class)
-	@Null(groups=OnTripCreate.class)
+	@NotNull(groups = OnTripUpdate.class)
+	@Null(groups = OnTripCreate.class)
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	/* JSON */
+	@JsonProperty(access = Access.READ_ONLY)
 	private Long id;
 
 	/* JPA */
@@ -41,6 +44,7 @@ public class TripDto implements Serializable {
 	private int places;
 
 	/* Lombok */
+	@JsonProperty(access = Access.READ_ONLY)
 	private Trip.Status status;
 
 	/* Validation */

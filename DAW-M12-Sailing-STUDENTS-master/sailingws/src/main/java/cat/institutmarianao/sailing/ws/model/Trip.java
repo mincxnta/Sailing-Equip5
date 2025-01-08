@@ -8,6 +8,7 @@ import org.hibernate.annotations.Formula;
 
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripUpdate;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,7 +24,6 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -56,8 +56,8 @@ public class Trip implements Serializable {
 	}
 
 	/* Validation */
-	@NotNull(groups=OnTripUpdate.class)
-	@Null(groups=OnTripCreate.class)
+	@NotNull(groups = OnTripUpdate.class)
+	@Null(groups = OnTripCreate.class)
 	/* JPA */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,11 +85,12 @@ public class Trip implements Serializable {
 	/* Validation */
 	@NotEmpty
 	/* JPA */
-	@OneToMany(mappedBy = "trip")
+	@OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
 	private List<@Valid Action> tracking;
 
 	/* JPA */
 	/* Hibernate */
+	// TODO TripToTripDTO status
 	@Formula("(SELECT CASE a.type WHEN '" + Action.BOOKING + "' THEN '" + Trip.RESERVED + "' WHEN '"
 			+ Action.RESCHEDULING + "' THEN '" + Trip.RESCHEDULED + "' WHEN '" + Action.CANCELLATION + "' THEN '"
 			+ Trip.CANCELLED + "' WHEN '" + Action.DONE + "' THEN '" + Trip.DONE + "' ELSE NULL END FROM actions a "

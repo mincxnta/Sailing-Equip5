@@ -3,6 +3,9 @@ package cat.institutmarianao.sailing.ws.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnActionUpdate;
+import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -19,8 +22,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -58,7 +61,8 @@ public abstract class Action implements Serializable {
 	}
 
 	/* Validation */
-	@NotNull
+	@NotNull(groups = OnActionUpdate.class)
+	@Null(groups = { OnActionCreate.class, OnTripCreate.class })
 	/* JPA */
 	@Id
 	@Column
@@ -72,7 +76,7 @@ public abstract class Action implements Serializable {
 	/* Lombok */
 	@NonNull
 	/* JPA */
-	@Column(name="type",insertable = false, updatable = false, nullable = false)
+	@Column(name = "type", insertable = false, updatable = false, nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	protected Type type;
 

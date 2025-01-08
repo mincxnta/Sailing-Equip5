@@ -1,17 +1,12 @@
 package cat.institutmarianao.sailing.ws.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,12 +20,9 @@ import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
-import cat.institutmarianao.sailing.ws.model.User;
-import cat.institutmarianao.sailing.ws.model.User.Role;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
-import cat.institutmarianao.sailing.ws.model.dto.UserDto;
 import cat.institutmarianao.sailing.ws.service.ActionService;
 import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import cat.institutmarianao.sailing.ws.service.TripService;
@@ -59,13 +51,13 @@ public class TripController {
 
 	@Autowired
 	private TripService tripService;
-	
+
 	@Autowired
 	private BookedPlaceService bookedPlaceService;
-	
+
 	@Autowired
 	private ActionService actionService;
-	
+
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
@@ -114,10 +106,9 @@ public class TripController {
 //				throw new Exception("Clients only can create client accounts");
 //			}
 //		}
-		//TODO Hacer TripDtoToTripConverter
 
-		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)), TripDto.class);
-		//return null;
+		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)),
+				TripDto.class);
 	}
 
 	/* Swagger */
@@ -128,7 +119,8 @@ public class TripController {
 	@PostMapping("/save/action")
 	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) {
 		// TODO Save an action related to a trip
-		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)), ActionDto.class);
+		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)),
+				ActionDto.class);
 	}
 
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
@@ -142,7 +134,7 @@ public class TripController {
 
 		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
 		for (BookedPlace bookedPlace : bookedPlaces) {
-		BookedPlaceDto bookedPlaceDto = conversionService.convert(bookedPlace, BookedPlaceDto.class);
+			BookedPlaceDto bookedPlaceDto = conversionService.convert(bookedPlace, BookedPlaceDto.class);
 			bookedPlacesDto.add(bookedPlaceDto);
 		}
 		return bookedPlacesDto;
@@ -154,8 +146,6 @@ public class TripController {
 
 	@GetMapping("/find/tracking/by/id/{tripId}")
 	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
-		// TODO find the tracking of a trip
-		
 		List<Action> actions = actionService.findByTripId(tripId);
 
 		List<ActionDto> actionsDto = new ArrayList<>(actions.size());
@@ -164,8 +154,6 @@ public class TripController {
 			actionsDto.add(actionDto);
 		}
 		return actionsDto;
-		
-
 
 	}
 

@@ -2,6 +2,8 @@ package cat.institutmarianao.sailing.ws.model.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -25,15 +27,9 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@JsonTypeInfo(
-	    use = JsonTypeInfo.Id.NAME, 
-	    include = JsonTypeInfo.As.EXISTING_PROPERTY, 
-	    property = "role",
-	    visible = true)
-	@JsonSubTypes({
-	    @JsonSubTypes.Type(value = ClientDto.class, name = User.CLIENT),
-	    @JsonSubTypes.Type(value = AdminDto.class, name = User.ADMIN)
-	})
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "role", visible = true)
+@JsonSubTypes({ @JsonSubTypes.Type(value = ClientDto.class, name = User.CLIENT),
+		@JsonSubTypes.Type(value = AdminDto.class, name = User.ADMIN) })
 public abstract class UserDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -47,6 +43,7 @@ public abstract class UserDto implements Serializable {
 	/* Validation */
 	@NotBlank
 	/* Lombok */
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@NonNull
 	protected String password;
 
