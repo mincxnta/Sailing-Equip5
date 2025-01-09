@@ -63,7 +63,6 @@ public class TripController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all")
 	public @ResponseBody List<TripDto> findAll() {
-		// TODO find all trips
 		List<Trip> trips = tripService.findAll();
 
 		List<TripDto> tripsDto = new ArrayList<>(trips.size());
@@ -102,9 +101,7 @@ public class TripController {
 //		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 //
 //		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
-//			if (!userDto.getRole().equals(Role.CLIENT)) {
-//				throw new Exception("Clients only can create client accounts");
-//			}
+//			throw new Exception("Clients can't save trips.");
 //		}
 
 		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)),
@@ -118,7 +115,6 @@ public class TripController {
 	/**/
 	@PostMapping("/save/action")
 	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) {
-		// TODO Save an action related to a trip
 		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)),
 				ActionDto.class);
 	}
@@ -147,6 +143,11 @@ public class TripController {
 	@GetMapping("/find/tracking/by/id/{tripId}")
 	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
 		List<Action> actions = actionService.findByTripId(tripId);
+		// TODO Probar try and catch
+		Trip trip = tripService.findById(tripId);
+		if (trip == null) {
+			throw new IllegalArgumentException("Trip with ID " + tripId + " does not exist.");
+		}
 
 		List<ActionDto> actionsDto = new ArrayList<>(actions.size());
 		for (Action action : actions) {

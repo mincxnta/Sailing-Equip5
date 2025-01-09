@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /* Validation */
-//TODO REVISAR
 /* JPA annotations */
 @Entity
 @DiscriminatorValue("DONE")

@@ -20,7 +20,8 @@ import jakarta.servlet.DispatcherType;
 @Configuration
 public class WebSecurityConfiguration {
 	protected static final String[] PUBLIC_URLS = { "/", "/users/save", "/users/check/**" };
-	protected static final String[] ADMIN_URLS = { "/users/find/all/**", "/users/delete/**", "/trips/find/all", };
+	protected static final String[] ADMIN_URLS = { "/users/find/all/**", "/users/delete/**", "/trips/find/all",
+			"/trips/save" };
 	protected static final String[] USER_URLS = { "/users/**" };
 
 	@Autowired

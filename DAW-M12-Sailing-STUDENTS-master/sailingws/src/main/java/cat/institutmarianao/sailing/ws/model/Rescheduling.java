@@ -14,7 +14,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /* Validation */
-//TODO REVISAR
 /* JPA annotations */
 @Entity
 @DiscriminatorValue("RESCHEDULING")

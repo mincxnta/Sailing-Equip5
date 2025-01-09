@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,7 +77,7 @@ public class UserController {
 	@Operation(summary = "Retrieve all users", description = "Retrieve all users from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
-	
+
 	@GetMapping(value = "/find/all")
 	public @ResponseBody List<UserDto> findAll() {
 
@@ -90,6 +91,7 @@ public class UserController {
 
 		return usersDto;
 	}
+
 	@Operation(summary = "Save a user", description = "Saves a user in the database. The response is the stored user from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class)) }, description = "User saved ok")
@@ -132,7 +134,12 @@ public class UserController {
 	/**/
 	@DeleteMapping("/delete/by/username/{username}")
 	public void deleteByUsername(@PathVariable("username") @NotBlank String username) {
-		userService.deleteByUsername(username);
+		try {
+			userService.deleteByUsername(username);
+		} catch (DataIntegrityViolationException e) {
+			throw new IllegalStateException("Cannot delete user because they have associated trips.");
+		}
+
 	}
 
 	private User convertAndEncodePassword(UserDto userDto) {
