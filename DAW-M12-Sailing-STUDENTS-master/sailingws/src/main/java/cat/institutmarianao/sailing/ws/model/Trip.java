@@ -75,7 +75,7 @@ public class Trip implements Serializable {
 	/* Validation */
 	@NotNull
 	/* JPA */
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "client_username")
 	private Client client;
 

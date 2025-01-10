@@ -34,18 +34,19 @@ public class ActionDtoToActionConverter implements Converter<ActionDto, Action> 
 		if (actionDto == null) {
 			return null;
 		}
-
+		Trip trip = tripService.findById(actionDto.getTripId());
 		if (actionDto instanceof BookingDto bookingDto) {
-			/*
-			 * if (trip.getStatus().equals("RESCHEDULING")) { throw new
-			 * IllegalArgumentException("Cannot change the trip status from RESCHEDULING to BOOKING."
-			 * ); }
-			 */
+//			if (actionDto instanceof BookingDto && trip.getStatus() == Trip.Status.RESCHEDULED) {
+//				throw new IllegalArgumentException("Cannot change the trip status from RESCHEDULING to BOOKING.");
+//			}
+
 			Booking reception = new Booking();
 			copyCommonProperties(bookingDto, reception);
 			return reception;
 		}
-		if (actionDto instanceof CancellationDto cancellationDto) {
+		if (actionDto instanceof
+
+		CancellationDto cancellationDto) {
 			Cancellation cancellation = new Cancellation();
 			copyCommonProperties(cancellationDto, cancellation);
 			return cancellation;

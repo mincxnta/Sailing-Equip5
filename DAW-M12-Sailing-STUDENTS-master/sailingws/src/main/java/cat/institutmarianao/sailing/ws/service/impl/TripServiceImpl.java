@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.repository.TripRepository;
 import cat.institutmarianao.sailing.ws.service.TripService;
@@ -32,7 +31,8 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public Trip findById(Long id) {
-		return tripRepository.findById(id).orElseThrow(NotFoundException::new);
+		return tripRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Trip with ID " + id + " does not exist."));
 	}
 
 	@Override
