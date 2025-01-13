@@ -34,6 +34,7 @@ import cat.institutmarianao.sailing.ws.model.dto.TripDto;
 import cat.institutmarianao.sailing.ws.service.ActionService;
 import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import cat.institutmarianao.sailing.ws.service.TripService;
+import cat.institutmarianao.sailing.ws.service.UserService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnActionCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,6 +67,9 @@ public class TripController {
 	@Autowired
 	private ActionService actionService;
 
+	@Autowired
+	private UserService userService;
+
 	@Operation(summary = "Retrieve all reserved trips (status is RESERVED)", description = "Retrieve all reserved trips from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
@@ -88,7 +92,14 @@ public class TripController {
 	@GetMapping(value = "/find/all/by/client/username/{username}")
 	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
 
+		if (!userService.existsById(username)) {
+			throw new IllegalArgumentException("The user " + username + " does not exist.");
+		}
 		List<Trip> trips = tripService.findAllByClientUsername(username);
+
+		if (trips.isEmpty()) {
+			throw new IllegalArgumentException("The user " + username + " does not have any trips.");
+		}
 
 		List<TripDto> tripsDto = new ArrayList<>(trips.size());
 		for (Trip trip : trips) {
@@ -148,6 +159,10 @@ public class TripController {
 
 		List<BookedPlace> bookedPlaces = bookedPlaceService.findByIdTripTypeIdAndIdDate(tripTypeId, date);
 
+		if (bookedPlaces.isEmpty()) {
+			throw new IllegalArgumentException("This trip type and date does not have any booked places.");
+		}
+
 		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
 		for (BookedPlace bookedPlace : bookedPlaces) {
 			BookedPlaceDto bookedPlaceDto = conversionService.convert(bookedPlace, BookedPlaceDto.class);
@@ -163,7 +178,7 @@ public class TripController {
 	@GetMapping("/find/tracking/by/id/{tripId}")
 	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
 		List<Action> actions = actionService.findByTripId(tripId);
-		// TODO Probar try and catch
+
 		Trip trip = tripService.findById(tripId);
 		if (trip == null) {
 			throw new IllegalArgumentException("Trip with ID " + tripId + " does not exist.");
