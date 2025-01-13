@@ -1,12 +1,16 @@
 package cat.institutmarianao.sailing.ws.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +21,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
+import cat.institutmarianao.sailing.ws.model.dto.CancellationDto;
+import cat.institutmarianao.sailing.ws.model.dto.DoneDto;
+import cat.institutmarianao.sailing.ws.model.dto.ReschedulingDto;
 import cat.institutmarianao.sailing.ws.model.dto.TripDto;
 import cat.institutmarianao.sailing.ws.service.ActionService;
 import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
@@ -114,7 +122,19 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Action saved ok")
 	/**/
 	@PostMapping("/save/action")
-	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) {
+	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) throws Exception {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
+			if (actionDto instanceof CancellationDto) {
+				throw new ForbiddenException("Admins can't cancel trips");
+			}
+		} else {
+			if (actionDto instanceof ReschedulingDto || actionDto instanceof DoneDto) {
+				throw new ForbiddenException("Clients only can cancel trips");
+			}
+		}
 		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)),
 				ActionDto.class);
 	}
