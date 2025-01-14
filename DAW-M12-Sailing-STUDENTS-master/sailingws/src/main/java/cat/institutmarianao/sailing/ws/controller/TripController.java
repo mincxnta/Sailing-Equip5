@@ -116,12 +116,6 @@ public class TripController {
 			@Content() }, description = "Error saving the trip. See response body for more details")
 	@PostMapping(value = "/save")
 	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) throws Exception {
-//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//
-//		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
-//			throw new Exception("Clients can't save trips.");
-//		}
 
 		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)),
 				TripDto.class);

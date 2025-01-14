@@ -22,4 +22,12 @@ public class BookedPlaceServiceImpl implements BookedPlaceService {
 	public List<BookedPlace> findByIdTripTypeIdAndIdDate(Long tripTypeId, Date date) {
 		return bookedPlaceRepository.findByIdTripTypeIdAndIdDate(tripTypeId, date);
 	}
+
+	@Override
+	public BookedPlace findByIdTripTypeIdAndIdDateAndIdDeparture(Long tripTypeId, Date date, Date departure) {
+		BookedPlace bookedPlace = new BookedPlace();
+		bookedPlace.setBookedPlaces(0);
+		return bookedPlaceRepository.findByIdTripTypeIdAndIdDateAndIdDeparture(tripTypeId, date, departure)
+				.orElse(bookedPlace);
+	}
 }

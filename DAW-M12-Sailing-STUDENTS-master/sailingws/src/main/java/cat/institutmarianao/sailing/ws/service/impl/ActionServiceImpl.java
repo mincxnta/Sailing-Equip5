@@ -11,11 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
+import cat.institutmarianao.sailing.ws.error.utils.ErrorUtils;
 import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Booking;
 import cat.institutmarianao.sailing.ws.model.Cancellation;
+import cat.institutmarianao.sailing.ws.model.Done;
+import cat.institutmarianao.sailing.ws.model.Rescheduling;
 import cat.institutmarianao.sailing.ws.model.Trip.Status;
+import cat.institutmarianao.sailing.ws.model.User.Role;
 import cat.institutmarianao.sailing.ws.repository.ActionRepository;
 import cat.institutmarianao.sailing.ws.service.ActionService;
 import jakarta.validation.ConstraintViolationException;
@@ -55,12 +59,22 @@ public class ActionServiceImpl implements ActionService {
 			throw new ConstraintViolationException("Trips can only be cancelled up to 48h in advance", null);
 		}
 
-		if (!action.getPerformer().equals(action.getTrip().getClient())) {
+		if (!action.getPerformer().equals(action.getTrip().getClient())
+				&& action.getPerformer().getRole().equals(Role.CLIENT)) {
 			throw new ForbiddenException("You can't change another client's trip status");
 		}
 
-		Action ret = actionRepository.saveAndFlush(action);
-		return ret;
+		// Probar
+		if (action instanceof Done && action.getDate().before(action.getTrip().getDate())) {
+			throw new ForbiddenException("You can't finish a future trip");
+		}
+
+		//
+		if (action instanceof Rescheduling rescheduling) {
+			ErrorUtils.checkDepartures(rescheduling.getNewDeparture(), rescheduling.getTrip());
+		}
+
+		return actionRepository.saveAndFlush(action);
 	}
 
 }
