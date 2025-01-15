@@ -17,6 +17,7 @@ public class ErrorUtils {
 
 		if (trip.getType().getCategory().equals(Category.GROUP)) {
 			List<Date> departures = trip.getType().getDepartures();
+			String str = departures.toString();
 			if (departure != null) {
 				checkDeparture(departure, departures);
 			}

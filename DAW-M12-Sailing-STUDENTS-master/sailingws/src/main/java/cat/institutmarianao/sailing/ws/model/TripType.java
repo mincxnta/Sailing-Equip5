@@ -67,7 +67,7 @@ public class TripType implements Serializable {
 	private Category category;
 
 	/* Validation */
-	@Max(value=255)
+	@Max(value = 255)
 	@Column
 	private String description;
 
@@ -78,13 +78,13 @@ public class TripType implements Serializable {
 
 	/* JPA */
 	@ElementCollection
-	@CollectionTable(name = "trip_type_departures", joinColumns = @JoinColumn(name = "id"))
+	@CollectionTable(name = "trip_type_departures", joinColumns = @JoinColumn(name = "trip_type_id", nullable = false))
 	@Temporal(TemporalType.TIME)
 	@Column(name = "departure")
 	private List<Date> departures;
 
 	/* Validation */
-	@Min(value=1)
+	@Min(value = 1)
 	@Column
 	private int duration;
 

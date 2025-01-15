@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.model.TripType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +38,7 @@ public class TripTypeDto implements Serializable {
 	private double price;
 
 	/* JSON */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SailingWsApplication.TIME_PATTERN)
 	private List<Date> departures;
 
 	/* Validation */

@@ -3,7 +3,8 @@ package cat.institutmarianao.sailing.ws.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -38,7 +39,7 @@ public abstract class ActionDto implements Serializable {
 	/* Validation */
 	@NotNull
 	/* Lombok */
-	@JsonIgnore
+	@JsonProperty(access = Access.READ_ONLY)
 	@EqualsAndHashCode.Include
 	protected Long id;
 
