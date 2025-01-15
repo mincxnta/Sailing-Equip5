@@ -36,10 +36,6 @@ public class ActionDtoToActionConverter implements Converter<ActionDto, Action> 
 		}
 		Trip trip = tripService.findById(actionDto.getTripId());
 		if (actionDto instanceof BookingDto bookingDto) {
-//			if (actionDto instanceof BookingDto && trip.getStatus() == Trip.Status.RESCHEDULED) {
-//				throw new IllegalArgumentException("Cannot change the trip status from RESCHEDULING to BOOKING.");
-//			}
-
 			Booking reception = new Booking();
 			copyCommonProperties(bookingDto, reception);
 			return reception;

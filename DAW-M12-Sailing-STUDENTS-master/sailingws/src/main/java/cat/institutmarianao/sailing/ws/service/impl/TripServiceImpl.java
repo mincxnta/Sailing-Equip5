@@ -29,8 +29,8 @@ public class TripServiceImpl implements TripService {
 	private BookedPlaceService bookedPlaceService;
 
 	@Override
-	public List<Trip> findAll() {
-		return tripRepository.findAll();
+	public List<Trip> getReservedTrips() {
+		return tripRepository.findByStatus(Trip.Status.RESERVED);
 	}
 
 	@Override

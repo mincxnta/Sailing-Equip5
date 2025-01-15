@@ -13,6 +13,7 @@ import cat.institutmarianao.sailing.ws.repository.UserRepository;
 import cat.institutmarianao.sailing.ws.service.UserService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnUserUpdate;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -69,6 +70,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteByUsername(@NotBlank String username) {
+
+		if (userRepository.findById(username).isEmpty()) {
+			throw new ConstraintViolationException("User " + username + " does not exist.", null);
+		}
 		userRepository.deleteById(username);
 	}
 

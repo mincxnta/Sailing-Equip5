@@ -17,7 +17,6 @@ public class BookedPlaceServiceImpl implements BookedPlaceService {
 	@Autowired
 	private BookedPlaceRepository bookedPlaceRepository;
 
-	// TODO Comprobar que las plazas no están llenas
 	@Override
 	public List<BookedPlace> findByIdTripTypeIdAndIdDate(Long tripTypeId, Date date) {
 		return bookedPlaceRepository.findByIdTripTypeIdAndIdDate(tripTypeId, date);

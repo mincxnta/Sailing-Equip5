@@ -75,7 +75,7 @@ public class TripController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all")
 	public @ResponseBody List<TripDto> findAll() {
-		List<Trip> trips = tripService.findAll();
+		List<Trip> trips = tripService.getReservedTrips();
 
 		List<TripDto> tripsDto = new ArrayList<>(trips.size());
 		for (Trip trip : trips) {

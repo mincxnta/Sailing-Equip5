@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
+import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.exception.model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 
@@ -55,11 +56,23 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.FORBIDDEN);
 	}
 
+	@ExceptionHandler
+	public ResponseEntity<Object> handleException(NotFoundException ex) {
+		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage());
+		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.NOT_FOUND);
+	}
+
 	/**
 	 * Any other exception
 	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> handleAllExceptions(Exception ex) {
+		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
+		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<Object> handleIllegalStateException(IllegalStateException ex) {
 		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
 		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}

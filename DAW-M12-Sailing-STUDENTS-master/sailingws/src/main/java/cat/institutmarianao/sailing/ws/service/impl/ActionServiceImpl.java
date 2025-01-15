@@ -64,12 +64,10 @@ public class ActionServiceImpl implements ActionService {
 			throw new ForbiddenException("You can't change another client's trip status");
 		}
 
-		// Probar
 		if (action instanceof Done && action.getDate().before(action.getTrip().getDate())) {
 			throw new ForbiddenException("You can't finish a future trip");
 		}
 
-		//
 		if (action instanceof Rescheduling rescheduling) {
 			ErrorUtils.checkDepartures(rescheduling.getNewDeparture(), rescheduling.getTrip());
 		}

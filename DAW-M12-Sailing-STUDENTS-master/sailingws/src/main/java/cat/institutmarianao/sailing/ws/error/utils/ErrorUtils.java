@@ -12,7 +12,6 @@ public class ErrorUtils {
 	private ErrorUtils() {
 	}
 
-	// TODO Revisar
 	public static void checkDepartures(Date departure, Trip trip) {
 
 		if (trip.getType().getCategory().equals(Category.GROUP)) {
