@@ -138,7 +138,11 @@ public class UserController {
 			userService.deleteByUsername(username);
 		} catch (DataIntegrityViolationException e) {
 			// Diferent segons rol
-			throw new IllegalStateException("Cannot delete user because they have associated trips.");
+			if (userService.getByUsername(username) instanceof Admin) {
+				throw new IllegalStateException("Cannot delete admin because they have associated actions.");
+			} else {
+				throw new IllegalStateException("Cannot delete client because they have associated trips.");
+			}
 		}
 	}
 

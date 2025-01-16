@@ -73,7 +73,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<Object> handleIllegalStateException(IllegalStateException ex) {
-		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
-		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.INTERNAL_SERVER_ERROR);
+		ErrorResponse errorResponse = new ErrorResponse(HttpStatus.LOCKED, ex.getLocalizedMessage());
+		return new ResponseEntity<>(errorResponse.getBody(), HttpStatus.LOCKED);
 	}
 }
