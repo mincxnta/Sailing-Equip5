@@ -1,6 +1,7 @@
 package cat.institutmarianao.sailing.ws.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import cat.institutmarianao.sailing.ws.model.User;
 import jakarta.validation.Valid;
@@ -9,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 public interface UserService {
 
-	List<User> findAll();
+	Page<User> findAll(Pageable pagination);
 
 	User getByUsername(@NotBlank String username);
 
