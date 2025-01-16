@@ -45,7 +45,7 @@ public class TripType implements Serializable {
 	}
 
 	/* Validation */
-	@NotBlank
+	@NotNull
 	/* JPA */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

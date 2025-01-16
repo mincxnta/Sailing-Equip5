@@ -13,7 +13,6 @@ import cat.institutmarianao.sailing.ws.repository.UserRepository;
 import cat.institutmarianao.sailing.ws.service.UserService;
 import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnUserUpdate;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +31,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getByUsername(@NotBlank String username) {
-		return userRepository.findById(username).orElseThrow(NotFoundException::new);
+		return userRepository.findById(username)
+				.orElseThrow(() -> new NotFoundException("User " + username + "does not exist"));
 	}
 
 	@Override
@@ -71,8 +71,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteByUsername(@NotBlank String username) {
 
-		if (userRepository.findById(username).isEmpty()) {
-			throw new ConstraintViolationException("User " + username + " does not exist.", null);
+		if (!existsById(username)) {
+			throw new NotFoundException("User with username " + username + " does not exist.");
 		}
 		userRepository.deleteById(username);
 	}

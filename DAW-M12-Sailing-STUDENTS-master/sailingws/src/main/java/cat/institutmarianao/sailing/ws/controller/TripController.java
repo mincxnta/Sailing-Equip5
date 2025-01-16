@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
 import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
+import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
@@ -93,12 +94,12 @@ public class TripController {
 	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
 
 		if (!userService.existsById(username)) {
-			throw new IllegalArgumentException("The user " + username + " does not exist.");
+			throw new NotFoundException("The user " + username + " does not exist.");
 		}
 		List<Trip> trips = tripService.findAllByClientUsername(username);
 
 		if (trips.isEmpty()) {
-			throw new IllegalArgumentException("The user " + username + " does not have any trips.");
+			throw new NotFoundException("The user " + username + " does not have any trips.");
 		}
 
 		List<TripDto> tripsDto = new ArrayList<>(trips.size());
@@ -130,6 +131,10 @@ public class TripController {
 	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		Trip trip = tripService.findById(actionDto.getTripId());
+		if (trip == null) {
+			throw new NotFoundException("Trip with ID " + actionDto.getTripId() + " does not exist.");
+		}
 
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
 			if (actionDto instanceof CancellationDto) {
@@ -154,7 +159,7 @@ public class TripController {
 		List<BookedPlace> bookedPlaces = bookedPlaceService.findByIdTripTypeIdAndIdDate(tripTypeId, date);
 
 		if (bookedPlaces.isEmpty()) {
-			throw new IllegalArgumentException("This trip type and date does not have any booked places.");
+			throw new NotFoundException("This trip type and date does not have any booked places.");
 		}
 
 		List<BookedPlaceDto> bookedPlacesDto = new ArrayList<>(bookedPlaces.size());
@@ -175,7 +180,7 @@ public class TripController {
 
 		Trip trip = tripService.findById(tripId);
 		if (trip == null) {
-			throw new IllegalArgumentException("Trip with ID " + tripId + " does not exist.");
+			throw new NotFoundException("Trip with ID " + tripId + " does not exist.");
 		}
 
 		List<ActionDto> actionsDto = new ArrayList<>(actions.size());

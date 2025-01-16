@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import cat.institutmarianao.sailing.ws.error.utils.ErrorUtils;
-import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
+import cat.institutmarianao.sailing.ws.error.departures.DepartureValidator;
+import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.repository.TripRepository;
@@ -41,7 +41,7 @@ public class TripServiceImpl implements TripService {
 	@Override
 	public Trip findById(Long id) {
 		return tripRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Trip with ID " + id + " does not exist."));
+				.orElseThrow(() -> new NotFoundException("Trip with ID " + id + " does not exist."));
 	}
 
 	@Override
@@ -53,23 +53,28 @@ public class TripServiceImpl implements TripService {
 	@Validated(OnTripCreate.class)
 	public Trip save(@NotNull @Valid Trip trip) {
 
+		checkAvailablePlaces(trip);
+		checkTripDate(trip);
+		DepartureValidator.validateDepartures(null, trip);
+
+		Trip ret = tripRepository.saveAndFlush(trip);
+		return ret;
+	}
+
+	private void checkTripDate(Trip trip) {
+		if (trip.getDate().before(new Date())) {
+			throw new ConstraintViolationException("You can't book a past trip", null);
+		}
+	}
+
+	private void checkAvailablePlaces(Trip trip) {
 		BookedPlace bookedPlace = bookedPlaceService.findByIdTripTypeIdAndIdDateAndIdDeparture(trip.getType().getId(),
 				trip.getDate(), trip.getDeparture());
 
-		long maxPlaces = trip.getType().getMaxPlaces();
-		long bookedPlaces = bookedPlace.getBookedPlaces();
-		long availablePlaces = maxPlaces - bookedPlaces;
+		long availablePlaces = trip.getType().getMaxPlaces() - bookedPlace.getBookedPlaces();
 		if (availablePlaces < trip.getPlaces()) {
 			throw new ConstraintViolationException(
 					"There aren't enough places for this trip, only " + availablePlaces + " places left.", null);
 		}
-
-		if (trip.getDate().before(new Date())) {
-			throw new ForbiddenException("You can't book a past trip");
-		}
-
-		ErrorUtils.checkDepartures(null, trip);
-		Trip ret = tripRepository.saveAndFlush(trip);
-		return ret;
 	}
 }

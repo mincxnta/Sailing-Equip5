@@ -137,9 +137,9 @@ public class UserController {
 		try {
 			userService.deleteByUsername(username);
 		} catch (DataIntegrityViolationException e) {
+			// Diferent segons rol
 			throw new IllegalStateException("Cannot delete user because they have associated trips.");
 		}
-
 	}
 
 	private User convertAndEncodePassword(UserDto userDto) {

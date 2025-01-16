@@ -1,4 +1,4 @@
-package cat.institutmarianao.sailing.ws.error.utils;
+package cat.institutmarianao.sailing.ws.error.departures;
 
 import java.util.Date;
 import java.util.List;
@@ -7,24 +7,24 @@ import cat.institutmarianao.sailing.ws.model.Trip;
 import cat.institutmarianao.sailing.ws.model.TripType.Category;
 import jakarta.validation.ConstraintViolationException;
 
-public class ErrorUtils {
+public class DepartureValidator {
 
-	private ErrorUtils() {
+	private DepartureValidator() {
 	}
 
-	public static void checkDepartures(Date departure, Trip trip) {
+	public static void validateDepartures(Date departure, Trip trip) {
 
 		if (trip.getType().getCategory().equals(Category.GROUP)) {
 			List<Date> departures = trip.getType().getDepartures();
 			String str = departures.toString();
 			if (departure != null) {
-				checkDeparture(departure, departures);
+				checkIfDepartureExists(departure, departures);
 			}
-			checkDeparture(trip.getDeparture(), departures);
+			checkIfDepartureExists(trip.getDeparture(), departures);
 		}
 	}
 
-	private static void checkDeparture(Date departure, List<Date> departures) {
+	private static void checkIfDepartureExists(Date departure, List<Date> departures) {
 		if (!departures.contains(departure)) {
 			throw new ConstraintViolationException("Invalid departure", null);
 		}

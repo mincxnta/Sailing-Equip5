@@ -11,12 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import cat.institutmarianao.sailing.ws.SailingWsApplication;
-import cat.institutmarianao.sailing.ws.error.utils.ErrorUtils;
+import cat.institutmarianao.sailing.ws.error.departures.DepartureValidator;
 import cat.institutmarianao.sailing.ws.exception.ForbiddenException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.Booking;
 import cat.institutmarianao.sailing.ws.model.Cancellation;
-import cat.institutmarianao.sailing.ws.model.Done;
 import cat.institutmarianao.sailing.ws.model.Rescheduling;
 import cat.institutmarianao.sailing.ws.model.Trip.Status;
 import cat.institutmarianao.sailing.ws.model.User.Role;
@@ -40,39 +39,49 @@ public class ActionServiceImpl implements ActionService {
 	@Override
 	public Action save(@NotNull @Valid Action action) throws ParseException {
 		Status status = action.getTrip().getStatus();
+
+		validatePerformer(action);
+		validateFinishedTrips(status);
+
 		if (action instanceof Booking) {
 			throw new ConstraintViolationException("Trip is already booked", null);
-		}
-
-		if (status.equals(Status.CANCELLED) || status.equals(Status.DONE)) {
-			throw new ConstraintViolationException("Trip is finished", null);
-		}
-
-		SimpleDateFormat sdf = new SimpleDateFormat(SailingWsApplication.DATE_PATTERN);
-		Date tripDate = action.getTrip().getDate();
-		Date today = sdf.parse(sdf.format(new Date()));
-
-		long days = tripDate.getTime() - today.getTime();
-		long hours = Duration.ofMillis(days).toHours();
-
-		if (action instanceof Cancellation && hours < 48) {
-			throw new ConstraintViolationException("Trips can only be cancelled up to 48h in advance", null);
-		}
-
-		if (!action.getPerformer().equals(action.getTrip().getClient())
-				&& action.getPerformer().getRole().equals(Role.CLIENT)) {
-			throw new ForbiddenException("You can't change another client's trip status");
-		}
-
-		if (action instanceof Done && action.getDate().before(action.getTrip().getDate())) {
-			throw new ForbiddenException("You can't finish a future trip");
-		}
-
-		if (action instanceof Rescheduling rescheduling) {
-			ErrorUtils.checkDepartures(rescheduling.getNewDeparture(), rescheduling.getTrip());
+		} else if (action instanceof Cancellation) {
+			validateCancellation(action);
+		} else if (action instanceof Rescheduling rescheduling) {
+			DepartureValidator.validateDepartures(rescheduling.getNewDeparture(), rescheduling.getTrip());
+		} else {
+			validateDone(action);
 		}
 
 		return actionRepository.saveAndFlush(action);
 	}
 
+	private void validateCancellation(Action action) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat(SailingWsApplication.DATE_PATTERN);
+		Date tripDate = action.getTrip().getDate();
+		Date today = sdf.parse(sdf.format(new Date()));
+
+		if (Duration.ofMillis(tripDate.getTime() - today.getTime()).toHours() < 48) {
+			throw new ConstraintViolationException("Trips can only be cancelled up to 48h in advance", null);
+		}
+	}
+
+	private void validateDone(Action action) {
+		if (action.getDate().before(action.getTrip().getDate())) {
+			throw new ForbiddenException("You can't finish a future trip");
+		}
+	}
+
+	private void validateFinishedTrips(Status status) {
+		if (status.equals(Status.CANCELLED) || status.equals(Status.DONE)) {
+			throw new ConstraintViolationException("Trip is finished", null);
+		}
+	}
+
+	private void validatePerformer(Action action) {
+		if (!action.getPerformer().equals(action.getTrip().getClient())
+				&& action.getPerformer().getRole().equals(Role.CLIENT)) {
+			throw new ForbiddenException("You can't change another client's trip status");
+		}
+	}
 }
