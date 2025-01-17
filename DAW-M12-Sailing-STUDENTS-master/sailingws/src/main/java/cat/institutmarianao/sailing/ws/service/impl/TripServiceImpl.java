@@ -1,9 +1,10 @@
 package cat.institutmarianao.sailing.ws.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,13 +30,13 @@ public class TripServiceImpl implements TripService {
 	private BookedPlaceService bookedPlaceService;
 
 	@Override
-	public List<Trip> getReservedTrips() {
-		return tripRepository.findByStatus(Trip.Status.RESERVED);
+	public Page<Trip> getReservedTrips(Pageable pagination) {
+		return tripRepository.findByStatus(Trip.Status.RESERVED, pagination);
 	}
 
 	@Override
-	public List<Trip> findAllByClientUsername(String username) {
-		return tripRepository.findAllByClientUsername(username);
+	public Page<Trip> findAllByClientUsername(String username, Pageable pagination) {
+		return tripRepository.findAllByClientUsername(username, pagination);
 	}
 
 	@Override

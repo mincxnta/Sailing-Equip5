@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -75,39 +77,26 @@ public class TripController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all")
-	public @ResponseBody List<TripDto> findAll() {
-		List<Trip> trips = tripService.getReservedTrips();
-
-		List<TripDto> tripsDto = new ArrayList<>(trips.size());
-		for (Trip trip : trips) {
-			TripDto tripDto = conversionService.convert(trip, TripDto.class);
-			tripsDto.add(tripDto);
-		}
-
-		return tripsDto;
+	public @ResponseBody Page<TripDto> findAll(Pageable pagination) {
+		return tripService.getReservedTrips(pagination).map(trip -> conversionService.convert(trip, TripDto.class));
 	}
 
 	@Operation(summary = "Retrieve all trips by username", description = "Retrieve all trips by username from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all/by/client/username/{username}")
-	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
+	public @ResponseBody Page<TripDto> findAllByClientUsername(@PathVariable("username") String username,
+			Pageable pagination) {
 
 		if (!userService.existsById(username)) {
 			throw new NotFoundException("The user " + username + " does not exist.");
 		}
-		List<Trip> trips = tripService.findAllByClientUsername(username);
 
-		if (trips.isEmpty()) {
+		if (tripService.findAllByClientUsername(username, pagination).isEmpty()) {
 			throw new NotFoundException("The user " + username + " does not have any trips.");
 		}
 
-		List<TripDto> tripsDto = new ArrayList<>(trips.size());
-		for (Trip trip : trips) {
-			TripDto tripDto = conversionService.convert(trip, TripDto.class);
-			tripsDto.add(tripDto);
-		}
-		return tripsDto;
+		return tripService.findAllByClientUsername(username, pagination).map(trip -> conversionService.convert(trip, TripDto.class));
 	}
 
 	@Operation(summary = "Save a trip", description = "Saves a trip in the database. The response is the stored trip from the database.")
@@ -117,9 +106,7 @@ public class TripController {
 			@Content() }, description = "Error saving the trip. See response body for more details")
 	@PostMapping(value = "/save")
 	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) throws Exception {
-
-		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)),
-				TripDto.class);
+		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)), TripDto.class);
 	}
 
 	/* Swagger */
@@ -131,8 +118,8 @@ public class TripController {
 	public ActionDto saveAction(@RequestBody @Validated(OnActionCreate.class) ActionDto actionDto) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		Trip trip = tripService.findById(actionDto.getTripId());
-		if (trip == null) {
+
+		if (tripService.findById(actionDto.getTripId()) == null) {
 			throw new NotFoundException("Trip with ID " + actionDto.getTripId() + " does not exist.");
 		}
 
@@ -145,8 +132,7 @@ public class TripController {
 				throw new ForbiddenException("Clients only can cancel trips");
 			}
 		}
-		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)),
-				ActionDto.class);
+		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)), ActionDto.class);
 	}
 
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
@@ -175,21 +161,13 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Tracking retrieved ok")
 
 	@GetMapping("/find/tracking/by/id/{tripId}")
-	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
-		List<Action> actions = actionService.findByTripId(tripId);
-
-		Trip trip = tripService.findById(tripId);
-		if (trip == null) {
+	public Page<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId, Pageable pagination) {
+		if (tripService.findById(tripId) == null) {
 			throw new NotFoundException("Trip with ID " + tripId + " does not exist.");
 		}
 
-		List<ActionDto> actionsDto = new ArrayList<>(actions.size());
-		for (Action action : actions) {
-			ActionDto actionDto = conversionService.convert(action, ActionDto.class);
-			actionsDto.add(actionDto);
-		}
-		return actionsDto;
-
+		return actionService.findByTripId(tripId, pagination)
+				.map(action -> conversionService.convert(action, ActionDto.class));
 	}
 
 }

@@ -1,6 +1,7 @@
 package cat.institutmarianao.sailing.ws.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import cat.institutmarianao.sailing.ws.model.Trip;
 import jakarta.validation.Valid;
@@ -8,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 public interface TripService {
 
-	List<Trip> findAllByClientUsername(String username);
+	Page<Trip> findAllByClientUsername(String username, Pageable pagination);
 
 	Trip findById(Long id);
 
@@ -16,5 +17,5 @@ public interface TripService {
 
 	Trip save(@NotNull @Valid Trip trip);
 
-	List<Trip> getReservedTrips();
+	Page<Trip> getReservedTrips(Pageable pagination);
 }

@@ -1,8 +1,8 @@
 package cat.institutmarianao.sailing.ws.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -20,8 +20,8 @@ public class TripTypeServiceImpl implements TripTypeService {
 	private TripTypeRepository tripTypeRepository;
 
 	@Override
-	public List<TripType> findAll() {
-		return tripTypeRepository.findAll();
+	public Page<TripType> findAll(Pageable pagination) {
+		return tripTypeRepository.findAll(pagination);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class TripTypeServiceImpl implements TripTypeService {
 	}
 
 	@Override
-	public List<TripType> findAllTripTypesByCategory(Category category) {
-		return tripTypeRepository.findAllTripTypesByCategory(category);
+	public Page<TripType> findAllTripTypesByCategory(Category category, Pageable pagination) {
+		return tripTypeRepository.findAllTripTypesByCategory(category, pagination);
 	}
 }

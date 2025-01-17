@@ -80,17 +80,7 @@ public class UserController {
 
 	@GetMapping(value = "/find/all")
 	public @ResponseBody Page<UserDto> findAll(Pageable pagination) {
-
-		// List<User> users = userService.findAll();
-
-//		List<UserDto> usersDto = new ArrayList<>(users.size());
-//		for (User user : users) {
-//			UserDto userDto = conversionService.convert(user, UserDto.class);
-//			usersDto.add(userDto);
-//		}
-//
-//		return usersDto;
-		return userService.findAll(pagination).map(u -> conversionService.convert(u, UserDto.class));
+		return userService.findAll(pagination).map(user -> conversionService.convert(user, UserDto.class));
 	}
 
 	@Operation(summary = "Save a user", description = "Saves a user in the database. The response is the stored user from the database.")
@@ -138,7 +128,6 @@ public class UserController {
 		try {
 			userService.deleteByUsername(username);
 		} catch (DataIntegrityViolationException e) {
-			// Diferent segons rol
 			if (userService.getByUsername(username) instanceof Admin) {
 				throw new IllegalStateException("Cannot delete admin because they have associated actions.");
 			} else {
