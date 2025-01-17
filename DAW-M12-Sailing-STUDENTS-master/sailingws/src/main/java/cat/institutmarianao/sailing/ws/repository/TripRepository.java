@@ -8,9 +8,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import cat.institutmarianao.sailing.ws.model.Trip;
 
 public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificationExecutor<Trip> {
-
 	Page<Trip> findAllByClientUsername(String username, Pageable pagination);
-
-	Page<Trip> findByStatus(Trip.Status status, Pageable pagination);
-
 }

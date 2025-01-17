@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -79,8 +80,9 @@ public class UserController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDto.class))) }, description = "Users retrieved ok")
 
 	@GetMapping(value = "/find/all")
-	public @ResponseBody Page<UserDto> findAll(Pageable pagination) {
-		return userService.findAll(pagination).map(user -> conversionService.convert(user, UserDto.class));
+	public @ResponseBody Page<UserDto> findAll(@RequestParam(value = "role", required = false) Role role,
+			Pageable pagination) {
+		return userService.findAll(role, pagination).map(user -> conversionService.convert(user, UserDto.class));
 	}
 
 	@Operation(summary = "Save a user", description = "Saves a user in the database. The response is the stored user from the database.")

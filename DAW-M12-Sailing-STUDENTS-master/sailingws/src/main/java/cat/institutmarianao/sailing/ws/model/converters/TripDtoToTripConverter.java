@@ -42,7 +42,7 @@ public class TripDtoToTripConverter implements Converter<TripDto, Trip> {
 
 		List<Action> tracking = null;
 		if (trip.getId() != null) {
-			tracking =  actionService.findByTripId(trip.getId());
+			tracking = actionService.findByTripId(trip.getId());
 		}
 		if (tracking != null) {
 			trip.setTracking(tracking);

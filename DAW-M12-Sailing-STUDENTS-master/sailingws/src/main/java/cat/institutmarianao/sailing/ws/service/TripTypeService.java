@@ -8,7 +8,7 @@ import cat.institutmarianao.sailing.ws.model.TripType.Category;
 import jakarta.validation.constraints.NotNull;
 
 public interface TripTypeService {
-	Page<TripType> findAll(Pageable pagination);
+	Page<TripType> findAll(Double minPrice, Double maxPrice, Pageable pagination);
 
 	TripType findById(@NotNull Long id);
 

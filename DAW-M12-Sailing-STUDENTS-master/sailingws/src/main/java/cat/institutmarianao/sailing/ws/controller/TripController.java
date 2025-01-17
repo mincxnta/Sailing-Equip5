@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,7 @@ import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
+import cat.institutmarianao.sailing.ws.model.Trip.Status;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.CancellationDto;
@@ -77,8 +79,12 @@ public class TripController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all")
-	public @ResponseBody Page<TripDto> findAll(Pageable pagination) {
-		return tripService.getReservedTrips(pagination).map(trip -> conversionService.convert(trip, TripDto.class));
+	public @ResponseBody Page<TripDto> findAll(@RequestParam(value = "status", required = false) Status status,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) Date startDate,
+			@RequestParam(value = "finishDate", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) Date finishDate,
+			Pageable pagination) {
+		return tripService.findAll(status, startDate, finishDate, pagination)
+				.map(trip -> conversionService.convert(trip, TripDto.class));
 	}
 
 	@Operation(summary = "Retrieve all trips by username", description = "Retrieve all trips by username from the database.")
@@ -96,7 +102,8 @@ public class TripController {
 			throw new NotFoundException("The user " + username + " does not have any trips.");
 		}
 
-		return tripService.findAllByClientUsername(username, pagination).map(trip -> conversionService.convert(trip, TripDto.class));
+		return tripService.findAllByClientUsername(username, pagination)
+				.map(trip -> conversionService.convert(trip, TripDto.class));
 	}
 
 	@Operation(summary = "Save a trip", description = "Saves a trip in the database. The response is the stored trip from the database.")
@@ -106,7 +113,8 @@ public class TripController {
 			@Content() }, description = "Error saving the trip. See response body for more details")
 	@PostMapping(value = "/save")
 	public TripDto save(@RequestBody @Validated(OnTripCreate.class) @NotNull TripDto tripDto) throws Exception {
-		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)), TripDto.class);
+		return conversionService.convert(tripService.save(conversionService.convert(tripDto, Trip.class)),
+				TripDto.class);
 	}
 
 	/* Swagger */
@@ -132,7 +140,8 @@ public class TripController {
 				throw new ForbiddenException("Clients only can cancel trips");
 			}
 		}
-		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)), ActionDto.class);
+		return conversionService.convert(actionService.save(conversionService.convert(actionDto, Action.class)),
+				ActionDto.class);
 	}
 
 	@Operation(summary = "Get booked places", description = "Gets all booked places that a trip has")
@@ -161,13 +170,19 @@ public class TripController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = ActionDto.class)) }, description = "Tracking retrieved ok")
 
 	@GetMapping("/find/tracking/by/id/{tripId}")
-	public Page<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId, Pageable pagination) {
+	public List<ActionDto> findTrackingByTripId(@PathVariable("tripId") @Positive Long tripId) {
+		List<Action> actions = actionService.findByTripId(tripId);
+
 		if (tripService.findById(tripId) == null) {
 			throw new NotFoundException("Trip with ID " + tripId + " does not exist.");
 		}
 
-		return actionService.findByTripId(tripId, pagination)
-				.map(action -> conversionService.convert(action, ActionDto.class));
+		List<ActionDto> actionsDto = new ArrayList<>(actions.size());
+		for (Action action : actions) {
+			ActionDto actionDto = conversionService.convert(action, ActionDto.class);
+			actionsDto.add(actionDto);
+		}
+		return actionsDto;
 	}
 
 }

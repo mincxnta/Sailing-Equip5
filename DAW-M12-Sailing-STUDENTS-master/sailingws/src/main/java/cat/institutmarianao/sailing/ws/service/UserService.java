@@ -4,13 +4,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import cat.institutmarianao.sailing.ws.model.User;
+import cat.institutmarianao.sailing.ws.model.User.Role;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public interface UserService {
 
-	Page<User> findAll(Pageable pagination);
+	Page<User> findAll(Role role, Pageable pagination);
 
 	User getByUsername(@NotBlank String username);
 

@@ -3,14 +3,17 @@ package cat.institutmarianao.sailing.ws.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.Client;
 import cat.institutmarianao.sailing.ws.model.User;
+import cat.institutmarianao.sailing.ws.model.User.Role;
 import cat.institutmarianao.sailing.ws.repository.UserRepository;
 import cat.institutmarianao.sailing.ws.service.UserService;
+import cat.institutmarianao.sailing.ws.specifications.UserSpecifications;
 import cat.institutmarianao.sailing.ws.validation.groups.OnUserCreate;
 import cat.institutmarianao.sailing.ws.validation.groups.OnUserUpdate;
 import jakarta.validation.Valid;
@@ -25,8 +28,9 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 
 	@Override
-	public Page<User> findAll(Pageable pagination) {
-		return userRepository.findAll(pagination);
+	public Page<User> findAll(Role role, Pageable pagination) {
+		Specification<User> spec = Specification.where(UserSpecifications.hasRole(role));
+		return userRepository.findAll(spec, pagination);
 	}
 
 	@Override

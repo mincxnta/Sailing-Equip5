@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.sailing.ws.model.TripType;
@@ -39,8 +40,10 @@ public class TripTypeController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripType.class))) }, description = "Shipments retrieved ok")
 	/**/
 	@GetMapping("/find/all")
-	public Page<TripTypeDto> findAllTripTypes(Pageable pagination) {
-		return tripTypeService.findAll(pagination).map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
+	public Page<TripTypeDto> findAllTripTypes(@RequestParam(value = "minPrice", required = false) Double minPrice,
+			@RequestParam(value = "maxPrice", required = false) Double maxPrice, Pageable pagination) {
+		return tripTypeService.findAll(minPrice, maxPrice, pagination)
+				.map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
 	}
 
 	/* Swagger */
@@ -51,7 +54,8 @@ public class TripTypeController {
 	@GetMapping("/find/all/{category}")
 	public Page<TripTypeDto> findAllTripTypesByCategory(@PathVariable("category") Category category,
 			Pageable pagination) {
-		return tripTypeService.findAllTripTypesByCategory(category, pagination).map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
+		return tripTypeService.findAllTripTypesByCategory(category, pagination)
+				.map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
 	}
 
 	/* Swagger */
@@ -61,7 +65,8 @@ public class TripTypeController {
 	/**/
 	@GetMapping("/find/all/group")
 	public Page<TripTypeDto> findAllGroupTripTypes(Pageable pagination) {
-		return tripTypeService.findAllTripTypesByCategory(Category.GROUP, pagination).map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
+		return tripTypeService.findAllTripTypesByCategory(Category.GROUP, pagination)
+				.map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
 	}
 
 	/* Swagger */
@@ -71,7 +76,8 @@ public class TripTypeController {
 	/**/
 	@GetMapping("/find/all/private")
 	public Page<TripTypeDto> findAllPrivateTripTypes(Pageable pagination) {
-		return tripTypeService.findAllTripTypesByCategory(Category.PRIVATE, pagination).map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
+		return tripTypeService.findAllTripTypesByCategory(Category.PRIVATE, pagination)
+				.map(tripType -> conversionService.convert(tripType, TripTypeDto.class));
 	}
 
 	/* Swagger */

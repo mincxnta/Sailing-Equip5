@@ -34,7 +34,6 @@ public class ActionDtoToActionConverter implements Converter<ActionDto, Action> 
 		if (actionDto == null) {
 			return null;
 		}
-		Trip trip = tripService.findById(actionDto.getTripId());
 		if (actionDto instanceof BookingDto bookingDto) {
 			Booking reception = new Booking();
 			copyCommonProperties(bookingDto, reception);
