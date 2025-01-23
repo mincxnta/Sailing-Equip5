@@ -1,11 +1,9 @@
 package cat.institutmarianao.sailing.ws.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -13,11 +11,9 @@ import cat.institutmarianao.sailing.ws.error.departures.DepartureValidator;
 import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
-import cat.institutmarianao.sailing.ws.model.Trip.Status;
 import cat.institutmarianao.sailing.ws.repository.TripRepository;
 import cat.institutmarianao.sailing.ws.service.BookedPlaceService;
 import cat.institutmarianao.sailing.ws.service.TripService;
-import cat.institutmarianao.sailing.ws.specifications.TripSpecifications;
 import cat.institutmarianao.sailing.ws.validation.groups.OnTripCreate;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -33,15 +29,13 @@ public class TripServiceImpl implements TripService {
 	private BookedPlaceService bookedPlaceService;
 
 	@Override
-	public Page<Trip> findAll(Status status, Date startDate, Date finishDate, Pageable pagination) {
-		Specification<Trip> spec = Specification.where(TripSpecifications.hasStatus(status))
-				.and(TripSpecifications.hasDateBetween(startDate, finishDate));
-		return tripRepository.findAll(spec, pagination);
+	public List<Trip> getReservedTrips() {
+		return tripRepository.findByStatus(Trip.Status.RESERVED);
 	}
 
 	@Override
-	public Page<Trip> findAllByClientUsername(String username, Pageable pagination) {
-		return tripRepository.findAllByClientUsername(username, pagination);
+	public List<Trip> findAllByClientUsername(String username) {
+		return tripRepository.findAllByClientUsername(username);
 	}
 
 	@Override

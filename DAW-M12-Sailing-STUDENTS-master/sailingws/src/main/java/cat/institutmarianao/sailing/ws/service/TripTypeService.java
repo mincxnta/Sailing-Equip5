@@ -1,17 +1,16 @@
 package cat.institutmarianao.sailing.ws.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
 
 import cat.institutmarianao.sailing.ws.model.TripType;
 import cat.institutmarianao.sailing.ws.model.TripType.Category;
 import jakarta.validation.constraints.NotNull;
 
 public interface TripTypeService {
-	Page<TripType> findAll(Double minPrice, Double maxPrice, Pageable pagination);
+	List<TripType> findAll();
 
 	TripType findById(@NotNull Long id);
 
-	Page<TripType> findAllTripTypesByCategory(Category category, Pageable pagination);
+	List<TripType> findAllTripTypesByCategory(Category category);
 
 }

@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +26,6 @@ import cat.institutmarianao.sailing.ws.exception.NotFoundException;
 import cat.institutmarianao.sailing.ws.model.Action;
 import cat.institutmarianao.sailing.ws.model.BookedPlace;
 import cat.institutmarianao.sailing.ws.model.Trip;
-import cat.institutmarianao.sailing.ws.model.Trip.Status;
 import cat.institutmarianao.sailing.ws.model.dto.ActionDto;
 import cat.institutmarianao.sailing.ws.model.dto.BookedPlaceDto;
 import cat.institutmarianao.sailing.ws.model.dto.CancellationDto;
@@ -79,31 +75,39 @@ public class TripController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all")
-	public @ResponseBody Page<TripDto> findAll(@RequestParam(value = "status", required = false) Status status,
-			@RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) Date startDate,
-			@RequestParam(value = "finishDate", required = false) @DateTimeFormat(pattern = SailingWsApplication.DATE_PATTERN) Date finishDate,
-			Pageable pagination) {
-		return tripService.findAll(status, startDate, finishDate, pagination)
-				.map(trip -> conversionService.convert(trip, TripDto.class));
+	public @ResponseBody List<TripDto> findAll() {
+		List<Trip> trips = tripService.getReservedTrips();
+
+		List<TripDto> tripsDto = new ArrayList<>(trips.size());
+		for (Trip trip : trips) {
+			TripDto tripDto = conversionService.convert(trip, TripDto.class);
+			tripsDto.add(tripDto);
+		}
+
+		return tripsDto;
 	}
 
 	@Operation(summary = "Retrieve all trips by username", description = "Retrieve all trips by username from the database.")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TripDto.class))) }, description = "Trips retrieved ok")
 	@GetMapping(value = "/find/all/by/client/username/{username}")
-	public @ResponseBody Page<TripDto> findAllByClientUsername(@PathVariable("username") String username,
-			Pageable pagination) {
+	public @ResponseBody List<TripDto> findAllByClientUsername(@PathVariable("username") String username) {
 
 		if (!userService.existsById(username)) {
 			throw new NotFoundException("The user " + username + " does not exist.");
 		}
+		List<Trip> trips = tripService.findAllByClientUsername(username);
 
-		if (tripService.findAllByClientUsername(username, pagination).isEmpty()) {
+		if (trips.isEmpty()) {
 			throw new NotFoundException("The user " + username + " does not have any trips.");
 		}
 
-		return tripService.findAllByClientUsername(username, pagination)
-				.map(trip -> conversionService.convert(trip, TripDto.class));
+		List<TripDto> tripsDto = new ArrayList<>(trips.size());
+		for (Trip trip : trips) {
+			TripDto tripDto = conversionService.convert(trip, TripDto.class);
+			tripsDto.add(tripDto);
+		}
+		return tripsDto;
 	}
 
 	@Operation(summary = "Save a trip", description = "Saves a trip in the database. The response is the stored trip from the database.")

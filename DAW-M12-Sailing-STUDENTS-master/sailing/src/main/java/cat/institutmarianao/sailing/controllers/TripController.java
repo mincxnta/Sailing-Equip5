@@ -38,7 +38,7 @@ public class TripController {
 	private TripService tripService;
 
 	@ModelAttribute("trip")
-	private Trip setuoTrip() {
+	private Trip setupTrip() {
 		return new Trip();
 	}
 
