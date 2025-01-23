@@ -23,7 +23,7 @@ public class HomeController {
 		// List<TripType> group = tripService.getAllGroupTripTypes();
 		// home.getModelMap().addAttribute("groupTrips", group);
 		// home.getModelMap().addAttribute("privateTrips",
-		// tripService.getAllPrivateTripTypes());
+		// tripService.getAllPrivateTripTypes()); 
 
 		return home;
 	}
