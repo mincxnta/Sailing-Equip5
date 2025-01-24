@@ -1,19 +1,27 @@
 package cat.institutmarianao.sailing.services.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import cat.institutmarianao.sailing.model.Action;
 import cat.institutmarianao.sailing.model.BookedPlace;
 import cat.institutmarianao.sailing.model.Trip;
 import cat.institutmarianao.sailing.model.TripType;
+import cat.institutmarianao.sailing.model.TripType.Category;
 import cat.institutmarianao.sailing.services.TripService;
 import jakarta.validation.constraints.NotNull;
 
+@Service
 public class TripServiceImpl implements TripService {
 	private static final String USERNAME = "username";
 	// Long?
@@ -79,14 +87,30 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public List<TripType> getAllGroupTripTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		final String baseUri = webServiceHost + ":" + webServicePort + TRIP_TYPES_FIND_ALL_BY_CATEGORY;
+
+		Map<String, TripType.Category> uriVariables = new HashMap<>();
+		uriVariables.put(CATEGORY, Category.GROUP);
+
+		ResponseEntity<List<TripType>> responseEntity = restTemplate.exchange(baseUri, HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<TripType>>() {
+				}, uriVariables);
+
+		return responseEntity.getBody();
 	}
 
 	@Override
 	public List<TripType> getAllPrivateTripTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		final String baseUri = webServiceHost + ":" + webServicePort + TRIP_TYPES_FIND_ALL_BY_CATEGORY;
+
+		Map<String, TripType.Category> uriVariables = new HashMap<>();
+		uriVariables.put(CATEGORY, Category.PRIVATE);
+
+		ResponseEntity<List<TripType>> responseEntity = restTemplate.exchange(baseUri, HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<TripType>>() {
+				}, uriVariables);
+
+		return responseEntity.getBody();
 	}
 
 	@Override
