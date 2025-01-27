@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -35,6 +36,7 @@ import jakarta.validation.constraints.Positive;
 @RequestMapping(value = "/trips")
 public class TripController {
 
+	@Autowired
 	private TripService tripService;
 
 	@ModelAttribute("trip")
@@ -96,8 +98,11 @@ public class TripController {
 
 	@GetMapping("/booked")
 	public ModelAndView booked() {
-		// TODO - Retrieve all booked trips
-		return null;
+		ModelAndView modelview = new ModelAndView("trips");
+		modelview.getModelMap().addAttribute("booked_trips", tripService.findAll());
+		// modelview.getModelMap().addAttribute("trip_types",
+		// tripService.getAllTripTypes());
+		return modelview;
 	}
 
 	@PostMapping("/cancel")

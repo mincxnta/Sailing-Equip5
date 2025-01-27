@@ -1,5 +1,6 @@
 package cat.institutmarianao.sailing.services.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import cat.institutmarianao.sailing.model.Action;
 import cat.institutmarianao.sailing.model.BookedPlace;
@@ -57,14 +59,22 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public List<Trip> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		final String uri = webServiceHost + ":" + webServicePort + TRIPS_FIND_ALL;
+
+		ResponseEntity<Trip[]> response = restTemplate.getForEntity(uri, Trip[].class);
+		return Arrays.asList(response.getBody());
 	}
 
 	@Override
 	public List<Trip> findAllByClientUsername(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		final String baseUri = webServiceHost + ":" + webServicePort + TRIPS_FIND_ALL_BY_CLIENT_USERNAME;
+		UriComponentsBuilder uriTemplate = UriComponentsBuilder.fromHttpUrl(baseUri);
+		Map<String, String> uriVariables = new HashMap<>();
+		uriVariables.put(USERNAME, username);
+
+		ResponseEntity<Trip[]> response = restTemplate
+				.getForEntity(uriTemplate.buildAndExpand(uriVariables).toUriString(), Trip[].class);
+		return Arrays.asList(response.getBody());
 	}
 
 	@Override
@@ -81,8 +91,9 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public List<TripType> getAllTripTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		final String uri = webServiceHost + ":" + webServicePort + TRIP_TYPES_FIND_ALL;
+		ResponseEntity<TripType[]> response = restTemplate.getForEntity(uri, TripType[].class);
+		return Arrays.asList(response.getBody());
 	}
 
 	@Override

@@ -29,7 +29,6 @@
 	</section>
 
 	<section class="container">
-		<!-- /* TODO - Include heading for 'Group Trips' */ -->
 		<div class=" card my-1">
 			<h5 class="card-header">
 				<span>Group Trips</span>
@@ -44,38 +43,36 @@
 					</div>
 					<div class="card-body">
 						<p class="card-text" th:text="#{${groupTrip.description}}"></p>
-						<p class="card-text h5" th:text="#{${groupTrip.price}}">30€ -
-							1 hour</p>
+						<p class="card-text h5"
+							th:text="${groupTrip.price + '€ - ' + groupTrip.duration + ' hours'}">30€
+							- 1 hour</p>
 						<p class="card-text">9 places</p>
 						<p class="card-text h6">Departures:</p>
-						<ul th:each="departure, iStat  : ${groupTrips.departures}">
-							<li th:text="#{${departure[iStat]}}"></li>
-						</ul>
+						<!--  TODO: Como mostrar las horas una a una
+						<ul th:each="departure: ${groupTrips.departures}">
+							<li th:text="${departure}"></li>
+						</ul>-->
 						<a class="btn btn-secondary">Book</a>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- /* TODO - Include tripTypes for ${groupTrips}*/ -->
 	</section>
 	<section class="container">
-		<!-- /* TODO - Include heading for 'Private Trips' */ -->
-		<!-- /* TODO - Include tripTypes for ${privateTrips}*/ -->
 		<div class=" card my-1">
 			<h5 class="card-header">
 				<span>Private Trips</span>
 			</h5>
 		</div>
 		<div class="row">
-			<div class="col-sm-4 col-md-3 my-2"
-				th:each="privateTrip, iStat  : ${privateTrips}">
+			<div class="col-sm-4 col-md-3 my-2"  th:each="privateTrip, iStat  : ${privateTrips}">
 				<div class="card">
 					<div class="card-header">
 						<h5 th:text="#{${privateTrip.title}}">1 Hour Sailing Tour</h5>
 					</div>
 					<div class="card-body">
 						<p class="card-text" th:text="#{${privateTrip.description}}"></p>
-						<p class="card-text h5" th:text="#{${privateTrip.price}}">30€
+						<p class="card-text h5" th:text="${privateTrip.price + '€ - ' + privateTrip.duration + ' hours'}">30€
 							- 1 hour</p>
 						<p class="card-text">9 places</p>
 						<p class="card-text h6">Departures:</p>
