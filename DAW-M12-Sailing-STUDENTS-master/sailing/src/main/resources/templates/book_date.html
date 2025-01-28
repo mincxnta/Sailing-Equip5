@@ -16,7 +16,7 @@
 
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../static/css/main.css" />
-<title>New user</title>
+<title>Booking - W&W</title>
 </head>
 <body>
 	<script th:src="@{/js/user.js}" src="../static/js/user.js"></script>
@@ -28,9 +28,17 @@
 		<nav class="navbar navbar-default"
 			th:replace="~{fragments/template :: navbar}">Navbar</nav>
 
-		<section
+		<!-- <section
 			th:replace="~{fragments/template :: heading(#{book.heading})}"
-			class="card my-1">Booking</section>
+			class="card my-1">Booking</section> -->
+
+
+		<div class=" card my-1">
+			<h5 class="card-header">
+				<span>Booking</span>
+			</h5>
+		</div>
+
 
 		<form action="https://192.168.9.66:8444/trips/book/book_departure"
 			method="post" class="form-horizontal">
