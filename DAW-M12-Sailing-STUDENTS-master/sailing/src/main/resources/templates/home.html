@@ -51,8 +51,9 @@
 						<!--  TODO: Como mostrar las horas una a una
 						<ul th:each="departure : ${groupTrips.departures}">
 							<li th:text="${#dates.format(departure, 'HH:mm')}"></li>
-						</ul>-->
+						</ul> -->
 						<a class="btn btn-secondary">Book</a>
+						<!-- <a class="btn btn-secondary" href="book_date.html" th:href="@{/book/{groupTrip.id}}">Book</a> -->
 					</div>
 				</div>
 			</div>
@@ -65,20 +66,23 @@
 			</h5>
 		</div>
 		<div class="row">
-			<div class="col-sm-4 col-md-3 my-2"  th:each="privateTrip, iStat  : ${privateTrips}">
+			<div class="col-sm-4 col-md-3 my-2"
+				th:each="privateTrip, iStat  : ${privateTrips}">
 				<div class="card">
 					<div class="card-header">
 						<h5 th:text="#{${privateTrip.title}}">1 Hour Sailing Tour</h5>
 					</div>
 					<div class="card-body">
 						<p class="card-text" th:text="#{${privateTrip.description}}"></p>
-						<p class="card-text h5" th:text="${privateTrip.price + '€ - ' + privateTrip.duration + ' hours'}">30€
+						<p class="card-text h5"
+							th:text="${privateTrip.price + '€ - ' + privateTrip.duration + ' hours'}">30€
 							- 1 hour</p>
 						<p class="card-text">9 places</p>
 						<p class="card-text h6">Departures:</p>
-						<!--  <ul th:each="departure : ${groupTrips.departures}">
-					  <li th:text="${#dates.format(departure, 'HH:mm')}"></li>
-				</ul>-->
+						<!--  TODO: Como mostrar las horas una a una
+						<ul th:each="departure : ${privateTrips.departures}">
+							<li th:text="${#dates.format(departure, 'HH:mm')}"></li>
+						</ul> -->
 						<a class="btn btn-secondary">Book</a>
 					</div>
 				</div>
