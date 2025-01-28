@@ -100,14 +100,13 @@ public class TripController {
 	public ModelAndView booked() {
 		ModelAndView modelview = new ModelAndView("trips");
 		modelview.getModelMap().addAttribute("booked_trips", tripService.findAll());
-		// modelview.getModelMap().addAttribute("trip_types",
-		// tripService.getAllTripTypes());
+		// modelview.getModelMap().addAttribute("user_trips",tripService.findAllByClientUsername(null));
 		return modelview;
 	}
 
 	@PostMapping("/cancel")
 	public String cancelTrip(@Validated Cancellation cancellation) {
-
+		tripService.track(cancellation);
 		// TODO - Cancel a trip (add a CANCELLATION action to its tracking)
 		return null;
 	}
