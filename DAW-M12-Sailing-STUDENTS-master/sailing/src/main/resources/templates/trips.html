@@ -16,7 +16,7 @@
 
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../static/css/main.css" />
-<title>Trips</title>
+<title>Trips - W&W</title>
 </head>
 <body>
 <script type="text/javascript" src="./Bookings_files/trips.js"></script>
@@ -205,21 +205,21 @@
 			th:replace="~{fragments/template :: heading('Trips')}">Trips</section>
 
 		<!-- TODO: Mostrar tabla admin/users. Mostrar título y categoría de triptype -->
-		<table  class="table table-striped table-bordered table-condensed table-responsive" sec:authorize="hasRole('ROLE_ADMIN')">
+		<table  class="table table-striped table-bordered table-condensed table-responsive">
 		<thead>
 				<tr>
 					<th>#</th>
 					<th>Date</th>
 					<th>Departure</th>
 					<th>Places</th>
-					<th>Username</th>
+					<th sec:authorize="hasRole('ROLE_ADMIN')">Username</th>
 					<th>Type</th>
 					<th>Category</th>
 					<th>Status</th>
 					<th>Actions</th>
 				</tr>
 				</thead>
-				<tbody>
+				<tbody sec:authorize="hasRole('ROLE_ADMIN')">
 				<tr th:each="trip, iStat  : ${booked_trips}">
 				<td th:text="${trip.id}"></td>
 				<td th:text="${trip.date}"></td>
@@ -234,6 +234,22 @@
 						</button>
 						<button data-bs-tripid="3" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
 							<i class="bi bi-journal-check"> </i>
+						</button></td>
+				</tr>
+			</tbody>
+			<tbody sec:authorize="hasRole('ROLE_USER')">
+			<tr>
+			<!--  <tr th:each="trip, iStat  : ${booked_trips}">
+				<td th:text="${trip.id}"></td>
+				<td th:text="${trip.date}"></td>
+				<td th:text="${trip.departure}"></td>
+				<td th:text="${trip.places}"></td>
+				<td th:text="${trip.clientUsername}"></td>
+				<!-- <td th:text="${trip.typeId.title}"></td>
+				<td th:text="${trip.typeId.category}"></td> 
+				<td th:text="${trip.status}"></td>-->
+				<td><button data-bs-tripid="10" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
+							<i class="bi bi-journal-x"> </i>
 						</button></td>
 				</tr>
 			</tbody>

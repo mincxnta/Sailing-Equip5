@@ -9,7 +9,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -79,14 +82,26 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public Trip save(Trip trip) {
-		// TODO Auto-generated method stub
-		return null;
+		final String uri = webServiceHost + ":" + webServicePort + TRIPS_SAVE;
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<Trip> request = new HttpEntity<>(trip, headers);
+
+		return restTemplate.postForObject(uri, request, Trip.class);
 	}
 
 	@Override
 	public List<BookedPlace> findBookedPlacesByTripIdAndDate(@NotNull Long id, @NotNull Date date) {
-		// TODO Auto-generated method stub
-		return null;
+		final String baseUri = webServiceHost + ":" + webServicePort + TRIPS_FIND_BOOKED_PLACES_BY_TRIP_TYPE_ID_DATE;
+
+		UriComponentsBuilder uriTemplate = UriComponentsBuilder.fromHttpUrl(baseUri).queryParam(TRIP_TYPE_ID, id)
+				.queryParam(DATE, date);
+
+		ResponseEntity<BookedPlace[]> response = restTemplate.getForEntity(uriTemplate.toUriString(),
+				BookedPlace[].class);
+		return Arrays.asList(response.getBody());
 	}
 
 	@Override
@@ -126,20 +141,37 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public TripType getTripTypeById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		final String baseUri = webServiceHost + ":" + webServicePort + TRIP_TYPES_GET_BY_ID;
+
+		UriComponentsBuilder uriTemplate = UriComponentsBuilder.fromHttpUrl(baseUri);
+		Map<String, Long> uriVariables = new HashMap<>();
+		uriVariables.put(TRIP_TYPE_ID, id);
+
+		return restTemplate.getForObject(uriTemplate.buildAndExpand(uriVariables).toUriString(), TripType.class);
 	}
 
 	@Override
 	public List<Action> findTrackingById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		final String baseUri = webServiceHost + ":" + webServicePort + TRIPS_FIND_TRACKING_BY_ID;
+
+		UriComponentsBuilder uriTemplate = UriComponentsBuilder.fromHttpUrl(baseUri);
+		Map<String, Long> uriVariables = new HashMap<>();
+		uriVariables.put(TRIP_ID, id);
+
+		ResponseEntity<Action[]> response = restTemplate
+				.getForEntity(uriTemplate.buildAndExpand(uriVariables).toUriString(), Action[].class);
+		return Arrays.asList(response.getBody());
 	}
 
 	@Override
 	public Action track(Action action) {
-		// TODO Auto-generated method stub
-		return null;
+		final String uri = webServiceHost + ":" + webServicePort + TRIPS_SAVE_ACTION;
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<Action> request = new HttpEntity<>(action, headers);
+		return restTemplate.postForObject(uri, request, Action.class);
 	}
 
 }
