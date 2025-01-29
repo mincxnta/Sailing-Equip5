@@ -47,7 +47,7 @@ public class TripServiceImpl implements TripService {
 	private static final String TRIPS_SAVE = TRIPS_SERVICE + "/save";
 	private static final String TRIPS_SAVE_ACTION = TRIPS_SERVICE + "/save/action";
 
-	private static final String TRIP_TYPES_GET_BY_ID = TRIP_TYPES_SERVICE + "/get/by/id{" + TRIP_TYPE_ID + "}";
+	private static final String TRIP_TYPES_GET_BY_ID = TRIP_TYPES_SERVICE + "/get/by/id/{" + TRIP_TYPE_ID + "}";
 	private static final String TRIP_TYPES_FIND_ALL = TRIP_TYPES_SERVICE + "/find/all";
 	private static final String TRIP_TYPES_FIND_ALL_BY_CATEGORY = TRIP_TYPES_SERVICE + "/find/all/{" + CATEGORY + "}";
 
