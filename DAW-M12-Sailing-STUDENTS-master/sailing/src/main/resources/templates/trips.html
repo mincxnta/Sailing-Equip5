@@ -19,17 +19,18 @@
 <title>Trips - W&W</title>
 </head>
 <body>
-<!-- TODO FIXME !! -->
-<script type="text/javascript" src="./Bookings_files/trips.js"></script>
+<script type="text/javascript" th:src="@{/js/trips.js}"></script>
+
 	<!--/* TODO - Include AJAX script to load tracking */-->
 
 	<!--/* TODO - Include cancel trip dialog, if user has role CLIENT */-->
 <div sec:authorize="hasRole('CLIENT')" th:replace="~{fragments/dialogs :: cancel_trip_dialog}"></div>
 	<!--/* TODO - Include done trip dialog, if user has role ADMIN  */-->
-
+<div sec:authorize="hasRole('ADMIN')" th:replace="~{fragments/dialogs :: trip_done_dialog}"></div>
 	<!--/* TODO - Include reschedule trip dialog, if user has role ADMIN  */-->
-
+<div sec:authorize="hasRole('ADMIN')" th:replace="~{fragments/dialogs :: reschedule_trip_dialog}"></div>
 	<!-- /* TODO - Include tracking dialog */ -->
+	<div th:replace="~{fragments/dialogs :: tracking_dialog}"></div>
 
 	<section class="container">
 		<header class="jumbotron" th:replace="~{fragments/template :: header}">
@@ -62,17 +63,16 @@
 				<td th:text="${trip.departure}"></td>
 				<td th:text="${trip.places}"></td>
 				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
-				<!-- <td th:text="${trip.typeId.title}"></td>
-				<td th:text="${trip.typeId.category}"></td> -->
+				<td th:text="${tripTypes[trip.typeId].title}"></td> 
+    			<td th:text="${tripTypes[trip.typeId].category}"></td> 
 				<td th:text="${trip.status}"></td>
-				<td><button sec:authorize="hasRole('ADMIN')" data-bs-tripid="3" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
+				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
 							<i class="bi bi-journals"> </i>
 						</button>
-						<button sec:authorize="hasRole('ADMIN')" data-bs-tripid="3" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
+						<button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
 							<i class="bi bi-journal-check"> </i>
 						</button>
-						<!-- TODO parametrizar botones -->
-<button sec:authorize="!hasRole('ADMIN')" data-bs-tripId="10" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
+						<button sec:authorize="hasRole('CLIENT')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
 							<i class="bi bi-journal-x"> </i>
 						</button></td>
 				</tr>

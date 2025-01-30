@@ -25,6 +25,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import cat.institutmarianao.sailing.model.Action;
+import cat.institutmarianao.sailing.model.BookedPlace;
 import cat.institutmarianao.sailing.model.Cancellation;
 import cat.institutmarianao.sailing.model.Done;
 import cat.institutmarianao.sailing.model.Rescheduling;
@@ -78,10 +79,28 @@ public class TripController {
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
 
+		// Validem si hi ha errors en el model
+		if (result.hasErrors()) {
+			modelMap.addAttribute("errorMessage", "La data no és vàlida. Torna-ho a intentar.");
+			return "book_date";
+		}
+
+		Date selectedDate = trip.getDate();
+		Date today = new Date();
+
+		if (selectedDate.before(today)) {
+			modelMap.addAttribute("errorMessage", "La data seleccionada ha de ser posterior a la data actual.");
+			return "book_date";
+		}
+
+		// Obtenim les places d'aquest tipus de viatge en la data escollida
+		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
+		long maxPlaces = tripType.getMaxPlaces();
+
 		// TODO - Prepare a dialog to select a departure time for the booked trip
 		// TODO - Leave all free places for the selected trip in the selected departure
 		// date in session (freePlaces attribute)
-		return null;
+		return "book_departure";
 	}
 
 	@PostMapping("/book/book_places")
@@ -90,8 +109,16 @@ public class TripController {
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap) {
 
+		if (result.hasErrors()) {
+			return "book_departure";
+		}
+		if (trip.getPlaces() > tripFreePlaces) {
+			modelMap.addAttribute("error", "No pots reservar més places de les disponibles.");
+			return "book_departure";
+		}
+
 		// TODO - Prepare a dialog to select places for the booked trip
-		return null;
+		return "book_places";
 	}
 
 	@PostMapping("/book/book_save")
@@ -114,6 +141,13 @@ public class TripController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+		// Creem mapa amb el tripTypeId i el seu TripType corresponent
+		List<TripType> allTripTypes = tripService.getAllTripTypes();
+		Map<Long, TripType> tripTypes = new HashMap<>();
+		for (TripType tripType : allTripTypes) {
+			tripTypes.put(tripType.getId(), tripType);
+		}
+
 		ModelAndView modelview = new ModelAndView("trips");
 
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
@@ -122,7 +156,7 @@ public class TripController {
 			modelview.getModelMap().addAttribute("booked_trips",
 					tripService.findAllByClientUsername(authentication.getName()));
 		}
-		// Mapa devolviendo triptype i triptypeid
+		modelview.getModelMap().addAttribute("tripTypes", tripTypes);
 		return modelview;
 	}
 
