@@ -65,7 +65,7 @@
 				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
 				<td th:text="${tripTypes[trip.typeId].title}"></td> 
     			<td th:text="${tripTypes[trip.typeId].category}"></td> 
-				<td th:text="${trip.status}"></td>
+				<td> <a th:attr="data-bs-tripid=${trip.id}" th:text="${trip.status}" data-bs-toggle="modal" data-bs-target="#trackingDialog"></a></td>
 				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
 							<i class="bi bi-journals"> </i>
 						</button>
