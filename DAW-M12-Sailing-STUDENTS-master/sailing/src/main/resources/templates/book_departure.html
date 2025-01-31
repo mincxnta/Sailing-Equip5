@@ -16,9 +16,9 @@
 
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../static/css/main.css" />
-<title>New user</title>
+<title>Booking - W&W</title>
 </head>
-<body >
+<body>
 	<script th:src="@{/js/user.js}" src="../static/js/user.js"></script>
 
 	<section class="container">
@@ -28,11 +28,58 @@
 		<nav class="navbar navbar-default"
 			th:replace="~{fragments/template :: navbar}">Navbar</nav>
 
-		<section
+		<!-- <section
 			th:replace="~{fragments/template :: heading(#{book.heading})}"
-			class="card my-1">Booking</section>
+			class="card my-1">Booking</section> -->
 
-			<!-- /* TODO - Build a form to get the departure time of the trip (DON'T FORGET TO INCLUDE CSRF FIELD!! */ -->
+		<div class=" card my-1">
+			<h5 class="card-header">
+				<span>Booking</span>
+			</h5>
+		</div>
+
+		<!-- /* TODO - Build a form to get the departure time of the trip (DON'T FORGET TO INCLUDE CSRF FIELD!! */ -->
+
+		<form action="#" th:action="@{/trips/book/book_places}" method="post" class="form-horizontal">
+
+			<div class="container col-md-12">
+
+				<div class="g-2 row">
+					<h4 class="g-2 col">1 Hour Sailing Tour</h4>
+				</div>
+				<div class="g-2 row">
+					<h5 class="g-2 col">30 € - 1 hour</h5>
+				</div>
+				<div class="g-2 row">
+					<div class="g-2 col">1h Sailing Experience</div>
+				</div>
+				<div class="mt-4 g-2 row">
+					<h5 class="g-2 col">Trip date</h5>
+				</div>
+				<div>
+					<div class="g-2 row">
+						<ul>
+							<li class="form-check"><input type="radio"
+								class="form-check-input col-1" value="09:30" id="departure1"
+								name="departure"> <label for="departure1"
+								class="form-check-label col-1">09:30</label> <span class="col-1">9
+									places free</span></li>
+							<li class="form-check"><input type="radio"
+								class="form-check-input col-1" value="13:30" id="departure2"
+								name="departure"> <label for="departure2"
+								class="form-check-label col-1">13:30</label> <span class="col-1">9
+									places free</span></li>
+							<li class="form-check"><input type="radio"
+								class="form-check-input col-1" value="17:30" id="departure3"
+								name="departure"> <label for="departure3"
+								class="form-check-label col-1">17:30</label> <span class="col-1">9
+									places free</span></li>
+						</ul>
+					</div>
+					<input value="Next" class="btn btn-success" type="submit">
+				</div>
+			</div>
+		</form>
 
 	</section>
 

@@ -25,7 +25,6 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import cat.institutmarianao.sailing.model.Action;
-import cat.institutmarianao.sailing.model.BookedPlace;
 import cat.institutmarianao.sailing.model.Cancellation;
 import cat.institutmarianao.sailing.model.Done;
 import cat.institutmarianao.sailing.model.Rescheduling;
@@ -70,7 +69,7 @@ public class TripController {
 	public ModelAndView bookSelectDate(@PathVariable(name = "trip_type_id", required = true) Long tripTypeId) {
 		TripType triptype = tripService.getTripTypeById(tripTypeId);
 		ModelAndView modelview = new ModelAndView("book_date");
-		modelview.getModelMap().addAttribute(triptype);
+		modelview.getModelMap().addAttribute("tripType", triptype);
 		return modelview;
 	}
 
@@ -94,12 +93,12 @@ public class TripController {
 		}
 
 		// Obtenim les places d'aquest tipus de viatge en la data escollida
-		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
-		long maxPlaces = tripType.getMaxPlaces();
-
-		// TODO - Prepare a dialog to select a departure time for the booked trip
-		// TODO - Leave all free places for the selected trip in the selected departure
-		// date in session (freePlaces attribute)
+//		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
+//		long maxPlaces = tripType.getMaxPlaces();
+//
+//		for (BookedPlace bookedPlace : bookedPlaces) {
+//			freePlaces.put(bookedPlace.getDeparture(), (maxPlaces - bookedPlace.getBookedPlaces()));
+//		}
 		return "book_departure";
 	}
 
@@ -152,11 +151,15 @@ public class TripController {
 
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
 			modelview.getModelMap().addAttribute("booked_trips", tripService.findAll());
+			modelview.getModelMap().addAttribute("rescheduling", new Rescheduling());
+			modelview.getModelMap().addAttribute("done", new Done());
 		} else {
 			modelview.getModelMap().addAttribute("booked_trips",
 					tripService.findAllByClientUsername(authentication.getName()));
+			modelview.getModelMap().addAttribute("cancellation", new Cancellation());
 		}
 		modelview.getModelMap().addAttribute("tripTypes", tripTypes);
+
 		return modelview;
 	}
 
