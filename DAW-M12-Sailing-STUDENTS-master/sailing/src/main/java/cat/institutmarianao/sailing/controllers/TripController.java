@@ -25,6 +25,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import cat.institutmarianao.sailing.model.Action;
+import cat.institutmarianao.sailing.model.BookedPlace;
 import cat.institutmarianao.sailing.model.Cancellation;
 import cat.institutmarianao.sailing.model.Done;
 import cat.institutmarianao.sailing.model.Rescheduling;
@@ -93,12 +94,16 @@ public class TripController {
 		}
 
 		// Obtenim les places d'aquest tipus de viatge en la data escollida
-//		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
-//		long maxPlaces = tripType.getMaxPlaces();
-//
-//		for (BookedPlace bookedPlace : bookedPlaces) {
-//			freePlaces.put(bookedPlace.getDeparture(), (maxPlaces - bookedPlace.getBookedPlaces()));
-//		}
+		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
+		long maxPlaces = tripType.getMaxPlaces();
+
+		for (BookedPlace bookedPlace : bookedPlaces) {
+			if (bookedPlaces.isEmpty()) {
+				freePlaces.put(bookedPlace.getDeparture(), maxPlaces);
+			} else {
+				freePlaces.put(bookedPlace.getDeparture(), (maxPlaces - bookedPlace.getBookedPlaces()));
+			}
+		}
 		return "book_departure";
 	}
 
@@ -163,7 +168,6 @@ public class TripController {
 		return modelview;
 	}
 
-	// Com s’indica de quin viatge és?
 	@PostMapping("/cancel")
 	public String cancelTrip(@Validated Cancellation cancellation) {
 		tripService.track(cancellation);

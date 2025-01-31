@@ -19,10 +19,10 @@
 <title>Trips - W&W</title>
 </head>
 <body>
-<script type="text/javascript" th:src="@{/js/trips.js}"></script>
+
 
 	<!--/* TODO - Include AJAX script to load tracking */-->
-
+<script type="text/javascript" th:src="@{/js/trips.js}"></script>
 	<!--/* TODO - Include cancel trip dialog, if user has role CLIENT */-->
 <div sec:authorize="hasRole('CLIENT')" th:replace="~{fragments/dialogs :: cancel_trip_dialog}"></div>
 	<!--/* TODO - Include done trip dialog, if user has role ADMIN  */-->
@@ -59,13 +59,15 @@
 				<tbody>
 				<tr th:each="trip, iStat  : ${booked_trips}">
 				<td th:text="${trip.id}"></td>
-				<td th:text="${trip.date}"></td>
-				<td th:text="${trip.departure}"></td>
+				<!-- TODO preguntar fallo -->
+				<td th:text="${#dates.format(trip.date,'dd-MM-yyyy')}"></td>
+				<td th:text="${#dates.format(trip.departure,'HH:mm')}"></td>
 				<td th:text="${trip.places}"></td>
 				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
 				<td th:text="${tripTypes[trip.typeId].title}"></td> 
     			<td th:text="${tripTypes[trip.typeId].category}"></td> 
-				<td th:text="${trip.status}"></td>
+    			<!-- TODO Com passar tracking -->
+				<td th:text="${trip.status}" th:attr="data-bs-tripid=${trip.id}" data-bs-toggle="modal" data-bs-target="#trackingDialog"></td>
 				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
 							<i class="bi bi-journals"> </i>
 						</button>
