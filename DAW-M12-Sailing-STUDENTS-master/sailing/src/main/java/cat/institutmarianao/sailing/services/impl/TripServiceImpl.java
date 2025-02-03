@@ -46,9 +46,6 @@ public class TripServiceImpl implements TripService {
 	private static final String TRIPS_FIND_ALL = TRIPS_SERVICE + "/find/all";
 	private static final String TRIPS_FIND_ALL_BY_CLIENT_USERNAME = TRIPS_SERVICE + "/find/all/by/client/username/{"
 			+ USERNAME + "}";
-//	private static final String TRIPS_FIND_BOOKED_PLACES_BY_TRIP_TYPE_ID_DATE = TRIPS_SERVICE
-//			+ "/bookedPlaces/{trip_type_id}/{date}";
-
 	private static final String TRIPS_FIND_BOOKED_PLACES_BY_TRIP_TYPE_ID_DATE = TRIPS_SERVICE + "/bookedPlaces/{"
 			+ TRIP_TYPE_ID + "}/{" + DATE + "}";
 	private static final String TRIPS_SAVE = TRIPS_SERVICE + "/save";
@@ -102,17 +99,18 @@ public class TripServiceImpl implements TripService {
 	@Override
 	public List<BookedPlace> findBookedPlacesByTripIdAndDate(@NotNull Long id, @NotNull Date date) {
 		final String baseUri = webServiceHost + ":" + webServicePort + TRIPS_FIND_BOOKED_PLACES_BY_TRIP_TYPE_ID_DATE;
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		// SimpleDateFormat amb constant
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		String formattedDate = dateFormat.format(date);
 
 		UriComponentsBuilder uriTemplate = UriComponentsBuilder.fromHttpUrl(baseUri);
-		Map<String, Object> uriVariables = new HashMap<>();
-		uriVariables.put(TRIP_TYPE_ID, id);
+		Map<String, String> uriVariables = new HashMap<>();
+		uriVariables.put(TRIP_TYPE_ID, id.toString());
 		uriVariables.put(DATE, formattedDate);
 
 		try {
-			ResponseEntity<BookedPlace[]> response = restTemplate.getForEntity(uriTemplate.toUriString(),
-					BookedPlace[].class);
+			ResponseEntity<BookedPlace[]> response = restTemplate
+					.getForEntity(uriTemplate.buildAndExpand(uriVariables).toUriString(), BookedPlace[].class);
 			return Arrays.asList(response.getBody());
 		} catch (HttpClientErrorException e) {
 			return Collections.emptyList();

@@ -102,7 +102,7 @@
 
 			<div class="modal-dialog">
 <!-- Arreglar esto -->
-				<form action="#" th:action="@{/trips/done}" method="post"
+				<form action="#" th:action="@{/trips/cancel}" method="post"
 					th:object="${cancellation}">
 
 					<div class="modal-content">
@@ -117,7 +117,7 @@
 
 							<p th:utext="#{dialogs.cancel.trip.body}">Confirm body</p>
 
-							<!-- TODO entendre què falla -->
+							
 							<input type="hidden" th:field="*{type}" /> 
 							<input type="hidden" th:field="*{performer}" /> 
 							<input id="tripId" type="hidden" th:field="*{tripId}" /> 

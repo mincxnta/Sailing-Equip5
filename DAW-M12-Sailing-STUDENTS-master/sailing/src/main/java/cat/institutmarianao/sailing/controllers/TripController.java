@@ -154,6 +154,7 @@ public class TripController {
 
 		ModelAndView modelview = new ModelAndView("trips");
 
+		// Afegir performer
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
 			modelview.getModelMap().addAttribute("booked_trips", tripService.findAll());
 			modelview.getModelMap().addAttribute("rescheduling", new Rescheduling());
@@ -170,6 +171,7 @@ public class TripController {
 
 	@PostMapping("/cancel")
 	public String cancelTrip(@Validated Cancellation cancellation) {
+		cancellation.setDate(new Date());
 		tripService.track(cancellation);
 		return "redirect:/trips/booked";
 	}

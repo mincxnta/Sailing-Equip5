@@ -57,10 +57,13 @@
 				</tr>
 				</thead>
 				<tbody>
+				<!-- TODO al enviar cualquier modal, falla el parse de fechas
+				messages: dd/MM/yyyy
+				error: yyyy-MM-dd -->
 				<tr th:each="trip, iStat  : ${booked_trips}">
 				<td th:text="${trip.id}"></td>
 				<!-- TODO preguntar fallo -->
-				<td th:text="${#dates.format(trip.date,'dd-MM-yyyy')}"></td>
+				<td th:text="${#dates.format(trip.date,'dd/MM/yyyy')}"></td>
 				<td th:text="${#dates.format(trip.departure,'HH:mm')}"></td>
 				<td th:text="${trip.places}"></td>
 				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
