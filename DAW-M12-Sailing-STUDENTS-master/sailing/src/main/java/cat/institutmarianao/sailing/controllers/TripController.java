@@ -3,8 +3,10 @@ package cat.institutmarianao.sailing.controllers;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -68,9 +70,17 @@ public class TripController {
 
 	@GetMapping("/book/{trip_type_id}")
 	public ModelAndView bookSelectDate(@PathVariable(name = "trip_type_id", required = true) Long tripTypeId) {
+		// Obtenim l'usuari autenticat
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 		TripType triptype = tripService.getTripTypeById(tripTypeId);
+		Trip trip = new Trip();
+		trip.setTypeId(tripTypeId);
+		trip.setClientUsername(authentication.getName());
+
 		ModelAndView modelview = new ModelAndView("book_date");
 		modelview.getModelMap().addAttribute("tripType", triptype);
+		modelview.getModelMap().addAttribute("trip", trip);
 		return modelview;
 	}
 
@@ -96,13 +106,16 @@ public class TripController {
 		// Obtenim les places d'aquest tipus de viatge en la data escollida
 		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
 		long maxPlaces = tripType.getMaxPlaces();
+		freePlaces.clear();
+		Set<Date> departures = new HashSet<>(tripType.getDepartures());
 
-		for (BookedPlace bookedPlace : bookedPlaces) {
-			if (bookedPlaces.isEmpty()) {
-				freePlaces.put(bookedPlace.getDeparture(), maxPlaces);
-			} else {
-				freePlaces.put(bookedPlace.getDeparture(), (maxPlaces - bookedPlace.getBookedPlaces()));
+		for (Date departure : departures) {
+			long availablePlaces = maxPlaces;
+			for (BookedPlace bookedPlace : bookedPlaces) {
+				if (bookedPlace.getDeparture().equals(departure))
+					availablePlaces = maxPlaces - bookedPlace.getBookedPlaces();
 			}
+			freePlaces.put(departure, availablePlaces);
 		}
 		return "book_departure";
 	}
@@ -113,15 +126,26 @@ public class TripController {
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap) {
 
-		if (result.hasErrors()) {
-			return "book_departure";
-		}
-		if (trip.getPlaces() > tripFreePlaces) {
-			modelMap.addAttribute("error", "No pots reservar més places de les disponibles.");
-			return "book_departure";
+		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
+		long reservedPlaces = 0;
+		for (BookedPlace bookedPlace : bookedPlaces) {
+			if (bookedPlace.getDeparture().equals(trip.getDeparture())) {
+				reservedPlaces = bookedPlace.getBookedPlaces();
+				break;
+			}
 		}
 
-		// TODO - Prepare a dialog to select places for the booked trip
+		tripFreePlaces = tripType.getMaxPlaces() - reservedPlaces;
+		modelMap.addAttribute("tripFreePlaces", tripFreePlaces);
+		// TODO Preguntar por qué falla el form
+//		if (result.hasErrors()) {
+//			return "book_departure";
+//		}
+//		if (trip.getPlaces() > tripFreePlaces) {
+//			modelMap.addAttribute("error", "No pots reservar més places de les disponibles.");
+//			return "book_departure";
+//		}
+
 		return "book_places";
 	}
 
@@ -130,9 +154,9 @@ public class TripController {
 			@SessionAttribute("tripType") TripType tripType, @SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap, SessionStatus sessionStatus) {
 		// Torna a la vista de selecció de places si hi ha errors
-		if (result.hasErrors()) {
-			return "book_places";
-		}
+//		if (result.hasErrors()) {
+//			return "book_places";
+//		}
 		Trip savedTrip = tripService.save(trip);
 		// Fa falta?
 		sessionStatus.setComplete();
@@ -154,15 +178,24 @@ public class TripController {
 
 		ModelAndView modelview = new ModelAndView("trips");
 
-		// Afegir performer
+		// Inicialitzar accions
+		Cancellation cancellation = new Cancellation();
+		Done done = new Done();
+		Rescheduling rescheduling = new Rescheduling();
+		String performer = authentication.getName();
+
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
 			modelview.getModelMap().addAttribute("booked_trips", tripService.findAll());
-			modelview.getModelMap().addAttribute("rescheduling", new Rescheduling());
-			modelview.getModelMap().addAttribute("done", new Done());
+
+			done.setPerformer(performer);
+			rescheduling.setPerformer(performer);
+			modelview.getModelMap().addAttribute("rescheduling", rescheduling);
+			modelview.getModelMap().addAttribute("done", done);
 		} else {
-			modelview.getModelMap().addAttribute("booked_trips",
-					tripService.findAllByClientUsername(authentication.getName()));
-			modelview.getModelMap().addAttribute("cancellation", new Cancellation());
+			modelview.getModelMap().addAttribute("booked_trips", tripService.findAllByClientUsername(performer));
+
+			cancellation.setPerformer(authentication.getName());
+			modelview.getModelMap().addAttribute("cancellation", cancellation);
 		}
 		modelview.getModelMap().addAttribute("tripTypes", tripTypes);
 
@@ -178,12 +211,14 @@ public class TripController {
 
 	@PostMapping("/done")
 	public String doneTrip(@Validated(OnActionCreate.class) Done done) {
+		done.setDate(new Date());
 		tripService.track(done);
 		return "redirect:/trips/booked";
 	}
 
 	@PostMapping("/reschedule")
 	public String saveAction(@Validated(OnActionCreate.class) Rescheduling rescheduling) {
+		rescheduling.setDate(new Date());
 		tripService.track(rescheduling);
 		return "redirect:/trips/booked";
 	}

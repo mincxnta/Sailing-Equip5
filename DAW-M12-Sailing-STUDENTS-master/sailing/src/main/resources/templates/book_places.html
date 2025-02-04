@@ -58,7 +58,7 @@
 				</div>
 				<div class="g-2 row">
 					<h5 class="g-2 col-2">Departure</h5>
-					<div th:text="${#dates.format(place.key,'HH:mm')}" class="g-2 col-2">13:30</div>
+					<div th:text="${#dates.format(trip.departure,'HH:mm')}" class="g-2 col-2">13:30</div>
 				</div>
 				<div class="g-2 row">
 					<h5 class="g-2 col-2">
@@ -66,9 +66,9 @@
 					</h5>
 					<div class="g-2 col-1">
 						<input id="places" type="number" min="1" max="9"
-							class="form-input" name="places" value="2">
+							class="form-input" name="places" value="1">
 					</div>
-					<div class="g-2 col-5">9 places free</div>
+					<div class="g-2 col-5" th:text="${tripFreePlaces + ' places free'}">9 places free</div>
 				</div>
 				<div class="g-2 row">
 					<div class="g-2">

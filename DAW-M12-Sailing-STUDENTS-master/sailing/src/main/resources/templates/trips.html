@@ -57,12 +57,8 @@
 				</tr>
 				</thead>
 				<tbody>
-				<!-- TODO al enviar cualquier modal, falla el parse de fechas
-				messages: dd/MM/yyyy
-				error: yyyy-MM-dd -->
 				<tr th:each="trip, iStat  : ${booked_trips}">
 				<td th:text="${trip.id}"></td>
-				<!-- TODO preguntar fallo -->
 				<td th:text="${#dates.format(trip.date,'dd/MM/yyyy')}"></td>
 				<td th:text="${#dates.format(trip.departure,'HH:mm')}"></td>
 				<td th:text="${trip.places}"></td>
@@ -70,14 +66,14 @@
 				<td th:text="${tripTypes[trip.typeId].title}"></td> 
     			<td th:text="${tripTypes[trip.typeId].category}"></td> 
     			<!-- TODO Com passar tracking -->
-				<td th:text="${trip.status}" th:attr="data-bs-tripid=${trip.id}" data-bs-toggle="modal" data-bs-target="#trackingDialog"></td>
-				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
+				<td th:text="${trip.status}" th:attr="data-bs-tripId=${trip.id}" data-bs-toggle="modal" data-bs-target="#trackingDialog"></td>
+				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
 							<i class="bi bi-journals"> </i>
 						</button>
-						<button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
+						<button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
 							<i class="bi bi-journal-check"> </i>
 						</button>
-						<button sec:authorize="hasRole('CLIENT')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
+						<button sec:authorize="hasRole('CLIENT')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
 							<i class="bi bi-journal-x"> </i>
 						</button></td>
 				</tr>
