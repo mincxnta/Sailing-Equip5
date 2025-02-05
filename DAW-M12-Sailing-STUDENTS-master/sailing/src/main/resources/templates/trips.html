@@ -65,8 +65,7 @@
 				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
 				<td th:text="${tripTypes[trip.typeId].title}"></td> 
     			<td th:text="${tripTypes[trip.typeId].category}"></td> 
-    			<!-- TODO Com passar tracking -->
-				<td th:text="${trip.status}" th:attr="data-bs-tripId=${trip.id}" data-bs-toggle="modal" data-bs-target="#trackingDialog"></td>
+				<td><a th:text="${trip.status}" th:onclick="|ajax_show_tracking('${trip.id}')|"></a></td>
 				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
 							<i class="bi bi-journals"> </i>
 						</button>

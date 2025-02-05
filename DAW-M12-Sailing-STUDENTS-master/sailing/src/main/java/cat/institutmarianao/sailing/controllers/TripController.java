@@ -77,6 +77,7 @@ public class TripController {
 		Trip trip = new Trip();
 		trip.setTypeId(tripTypeId);
 		trip.setClientUsername(authentication.getName());
+		trip.setPlaces(0);
 
 		ModelAndView modelview = new ModelAndView("book_date");
 		modelview.getModelMap().addAttribute("tripType", triptype);
@@ -138,13 +139,13 @@ public class TripController {
 		tripFreePlaces = tripType.getMaxPlaces() - reservedPlaces;
 		modelMap.addAttribute("tripFreePlaces", tripFreePlaces);
 		// TODO Preguntar por qué falla el form
-//		if (result.hasErrors()) {
-//			return "book_departure";
-//		}
-//		if (trip.getPlaces() > tripFreePlaces) {
-//			modelMap.addAttribute("error", "No pots reservar més places de les disponibles.");
-//			return "book_departure";
-//		}
+		if (result.hasErrors()) {
+			return "book_departure";
+		}
+		if (trip.getPlaces() > tripFreePlaces) {
+			modelMap.addAttribute("error", "No pots reservar més places de les disponibles.");
+			return "book_departure";
+		}
 
 		return "book_places";
 	}
@@ -154,9 +155,9 @@ public class TripController {
 			@SessionAttribute("tripType") TripType tripType, @SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap, SessionStatus sessionStatus) {
 		// Torna a la vista de selecció de places si hi ha errors
-//		if (result.hasErrors()) {
-//			return "book_places";
-//		}
+		if (result.hasErrors()) {
+			return "book_places";
+		}
 		Trip savedTrip = tripService.save(trip);
 		// Fa falta?
 		sessionStatus.setComplete();
@@ -226,8 +227,9 @@ public class TripController {
 	@GetMapping("/tracking/{id}")
 	public String showContentPart(@PathVariable(name = "id", required = true) @Positive Long id, ModelMap modelMap) {
 		List<Action> tracking = tripService.findTrackingById(id);
+		modelMap.addAttribute("tripId", id);
 		modelMap.addAttribute("tracking", tracking);
-		return "trips";
+		return "fragments/dialogs :: tracking_dialog_body";
 
 	}
 }

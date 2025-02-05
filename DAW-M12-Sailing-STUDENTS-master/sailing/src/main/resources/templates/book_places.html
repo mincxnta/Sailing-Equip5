@@ -65,8 +65,8 @@
 						<label for="places" class="form-label">Places</label>
 					</h5>
 					<div class="g-2 col-1">
-						<input id="places" type="number" min="1" max="9"
-							class="form-input" name="places" value="1">
+						<input id="places" type="number" min="1"
+							th:max="${tripFreePlaces}" class="form-input" name="places" value="1">
 					</div>
 					<div class="g-2 col-5" th:text="${tripFreePlaces + ' places free'}">9 places free</div>
 				</div>
