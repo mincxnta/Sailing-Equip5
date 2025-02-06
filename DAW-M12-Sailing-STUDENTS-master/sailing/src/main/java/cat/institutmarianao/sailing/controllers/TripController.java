@@ -85,12 +85,12 @@ public class TripController {
 		return modelview;
 	}
 
+	// TODO Preguntar al Toni cómo funcionan los private trips
 	@PostMapping("/book/book_departure")
 	public String bookSelectDeparture(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
 
-		// Validem si hi ha errors en el model
 		if (result.hasErrors()) {
 			modelMap.addAttribute("errorMessage", "La data no és vàlida. Torna-ho a intentar.");
 			return "book_date";
@@ -104,7 +104,6 @@ public class TripController {
 			return "book_date";
 		}
 
-		// Obtenim les places d'aquest tipus de viatge en la data escollida
 		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
 		long maxPlaces = tripType.getMaxPlaces();
 		freePlaces.clear();
@@ -138,7 +137,6 @@ public class TripController {
 
 		tripFreePlaces = tripType.getMaxPlaces() - reservedPlaces;
 		modelMap.addAttribute("tripFreePlaces", tripFreePlaces);
-		// TODO Preguntar por qué falla el form
 		if (result.hasErrors()) {
 			return "book_departure";
 		}
@@ -154,12 +152,10 @@ public class TripController {
 	public String bookSave(@Validated(OnTripCreate.class) @ModelAttribute("trip") Trip trip, BindingResult result,
 			@SessionAttribute("tripType") TripType tripType, @SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap, SessionStatus sessionStatus) {
-		// Torna a la vista de selecció de places si hi ha errors
 		if (result.hasErrors()) {
 			return "book_places";
 		}
-		Trip savedTrip = tripService.save(trip);
-		// Fa falta?
+		tripService.save(trip);
 		sessionStatus.setComplete();
 		return "redirect:/trips/booked";
 	}

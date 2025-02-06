@@ -64,8 +64,8 @@
 				<td th:text="${trip.places}"></td>
 				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
 				<td th:text="${tripTypes[trip.typeId].title}"></td> 
-    			<td th:text="${tripTypes[trip.typeId].category}"></td> 
-				<td><a th:text="${trip.status}" th:onclick="|ajax_show_tracking('${trip.id}')|"></a></td>
+    			<td th:text="#{'trip.category.'+${tripTypes[trip.typeId].category}}"></td> 
+				<td><a th:text="#{'trip.status.'+${trip.status}}" th:onclick="|ajax_show_tracking('${trip.id}')|"></a></td>
 				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
 							<i class="bi bi-journals"> </i>
 						</button>
