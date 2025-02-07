@@ -201,7 +201,8 @@
 
 							<p th:utext="#{dialogs.done.trip.body}">Confirm body</p>
 
-							<input type="hidden" th:field="*{type}" /> <input type="hidden"
+							<input type="hidden" th:field="*{type}" /> 
+							<input type="hidden"
 								th:field="*{performer}" /> <input id="tripId" type="hidden"
 								th:field="*{tripId}" /> <label
 								th:utext="#{dialogs.reschedule.trip.comments}"
@@ -398,7 +399,7 @@
 			<tbody>
 				<tr th:each="action, iStat  : ${tracking}">
 					<td th:text="${action.id}">1</td>
-					<td th:text="${action.type}"
+					<td th:text="#{'action.type.'+${action.type}}"
 						th:class="${#strings.equals(action.type, 'BOOKING')?'text-primary':
 					#strings.equals(action.type, 'CANCELLATION')?'text-danger':
 					#strings.equals(action.type, 'DONE')?'text-success':'text-warning'}">Booking</td>

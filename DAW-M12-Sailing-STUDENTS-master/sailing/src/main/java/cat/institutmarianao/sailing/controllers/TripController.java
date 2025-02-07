@@ -1,5 +1,7 @@
 package cat.institutmarianao.sailing.controllers;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import cat.institutmarianao.sailing.model.Action;
 import cat.institutmarianao.sailing.model.BookedPlace;
@@ -70,6 +74,7 @@ public class TripController {
 
 	@GetMapping("/book/{trip_type_id}")
 	public ModelAndView bookSelectDate(@PathVariable(name = "trip_type_id", required = true) Long tripTypeId) {
+
 		// Obtenim l'usuari autenticat
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -91,20 +96,23 @@ public class TripController {
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
 
+		List<String> errors = new ArrayList<>();
+
 		if (result.hasErrors()) {
-			modelMap.addAttribute("errorMessage", "La data no és vàlida. Torna-ho a intentar.");
+			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+			modelMap.addAttribute("errors", errors);
 			return "book_date";
 		}
 
-		Date selectedDate = trip.getDate();
 		Date today = new Date();
 
-		if (selectedDate.before(today)) {
-			modelMap.addAttribute("errorMessage", "La data seleccionada ha de ser posterior a la data actual.");
+		if (trip.getDate().before(today)) {
+			errors.add("La data seleccionada ha de ser posterior a la data actual.");
+			modelMap.addAttribute("errors", errors);
 			return "book_date";
 		}
 
-		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
+		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
 		long maxPlaces = tripType.getMaxPlaces();
 		freePlaces.clear();
 		Set<Date> departures = new HashSet<>(tripType.getDepartures());
@@ -126,6 +134,8 @@ public class TripController {
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap) {
 
+		List<String> errors = new ArrayList<>();
+
 		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
 		long reservedPlaces = 0;
 		for (BookedPlace bookedPlace : bookedPlaces) {
@@ -137,11 +147,10 @@ public class TripController {
 
 		tripFreePlaces = tripType.getMaxPlaces() - reservedPlaces;
 		modelMap.addAttribute("tripFreePlaces", tripFreePlaces);
+
 		if (result.hasErrors()) {
-			return "book_departure";
-		}
-		if (trip.getPlaces() > tripFreePlaces) {
-			modelMap.addAttribute("error", "No pots reservar més places de les disponibles.");
+			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+			modelMap.addAttribute("errors", errors);
 			return "book_departure";
 		}
 
@@ -152,7 +161,16 @@ public class TripController {
 	public String bookSave(@Validated(OnTripCreate.class) @ModelAttribute("trip") Trip trip, BindingResult result,
 			@SessionAttribute("tripType") TripType tripType, @SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap, SessionStatus sessionStatus) {
+		List<String> errors = new ArrayList<>();
+
+		if (trip.getPlaces() > tripFreePlaces) {
+			errors.add("No pots reservar més places de les disponibles.");
+			modelMap.addAttribute("errors", errors);
+			return "book_places";
+		}
 		if (result.hasErrors()) {
+			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+			modelMap.addAttribute("errors", errors);
 			return "book_places";
 		}
 		tripService.save(trip);
@@ -200,17 +218,37 @@ public class TripController {
 	}
 
 	@PostMapping("/cancel")
-	public String cancelTrip(@Validated Cancellation cancellation) {
+	public String cancelTrip(@Validated Cancellation cancellation, RedirectAttributes redirectAttributes) {
 		cancellation.setDate(new Date());
+		List<Trip> trips = tripService.findAllByClientUsername(cancellation.getPerformer());
+		for (Trip trip : trips) {
+			if (trip.getId().equals(cancellation.getTripId())) {
+				Date tripDate = trip.getDate();
+				Date today = new Date();
+
+				if (Duration.ofMillis(tripDate.getTime() - today.getTime()).toHours() < 48) {
+					redirectAttributes.addFlashAttribute("error",
+							"No es pot cancel·lar el viatge amb menys de 48 hores d'antelació.");
+					return "redirect:/trips/booked";
+				}
+			}
+		}
 		tripService.track(cancellation);
 		return "redirect:/trips/booked";
 	}
 
 	@PostMapping("/done")
-	public String doneTrip(@Validated(OnActionCreate.class) Done done) {
-		done.setDate(new Date());
-		tripService.track(done);
-		return "redirect:/trips/booked";
+	public String doneTrip(@Validated(OnActionCreate.class) Done done, RedirectAttributes redirectAttributes) {
+		try {
+			done.setDate(new Date());
+			tripService.track(done);
+			return "redirect:/trips/booked";
+		} catch (HttpClientErrorException.Forbidden e) {
+			String errorMessage = e.getResponseBodyAsString();
+			redirectAttributes.addFlashAttribute("error", "You can't finish a future trip");
+
+			return "redirect:/trips/booked";
+		}
 	}
 
 	@PostMapping("/reschedule")

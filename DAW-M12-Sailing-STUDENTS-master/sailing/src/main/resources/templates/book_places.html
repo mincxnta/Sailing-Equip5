@@ -38,6 +38,10 @@
 
 		<!-- /* TODO - Build a form to get the booked places of the trip (DON'T FORGET TO INCLUDE CSRF FIELD!! */ -->
 
+<div th:if="${errors}" class="alert alert-danger">
+			<p th:each="error : ${errors}" th:text="${error}"></p>
+		</div>
+		
 		<form action="#" th:action="@{/trips/book/book_save}"
 			method="post" class="form-horizontal">
 
