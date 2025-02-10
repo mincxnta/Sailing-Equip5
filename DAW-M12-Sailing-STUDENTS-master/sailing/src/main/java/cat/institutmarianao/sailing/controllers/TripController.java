@@ -1,6 +1,5 @@
 package cat.institutmarianao.sailing.controllers;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -107,7 +106,8 @@ public class TripController {
 		Date today = new Date();
 
 		if (trip.getDate().before(today)) {
-			errors.add("La data seleccionada ha de ser posterior a la data actual.");
+			// TODO Cómo mostrar
+			errors.add("book.error.futureDate");
 			modelMap.addAttribute("errors", errors);
 			return "book_date";
 		}
@@ -162,20 +162,21 @@ public class TripController {
 			@SessionAttribute("tripType") TripType tripType, @SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap, SessionStatus sessionStatus) {
 		List<String> errors = new ArrayList<>();
+		try {
 
-		if (trip.getPlaces() > tripFreePlaces) {
-			errors.add("No pots reservar més places de les disponibles.");
+			if (result.hasErrors()) {
+				result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+				modelMap.addAttribute("errors", errors);
+				return "book_places";
+			}
+			tripService.save(trip);
+			sessionStatus.setComplete();
+			return "redirect:/trips/booked";
+		} catch (HttpClientErrorException.UnprocessableEntity e) {
+			errors.add("book.error.places");
 			modelMap.addAttribute("errors", errors);
 			return "book_places";
 		}
-		if (result.hasErrors()) {
-			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-			modelMap.addAttribute("errors", errors);
-			return "book_places";
-		}
-		tripService.save(trip);
-		sessionStatus.setComplete();
-		return "redirect:/trips/booked";
 	}
 
 	@GetMapping("/booked")
@@ -219,22 +220,15 @@ public class TripController {
 
 	@PostMapping("/cancel")
 	public String cancelTrip(@Validated Cancellation cancellation, RedirectAttributes redirectAttributes) {
-		cancellation.setDate(new Date());
-		List<Trip> trips = tripService.findAllByClientUsername(cancellation.getPerformer());
-		for (Trip trip : trips) {
-			if (trip.getId().equals(cancellation.getTripId())) {
-				Date tripDate = trip.getDate();
-				Date today = new Date();
+		try {
+			cancellation.setDate(new Date());
+			tripService.track(cancellation);
 
-				if (Duration.ofMillis(tripDate.getTime() - today.getTime()).toHours() < 48) {
-					redirectAttributes.addFlashAttribute("error",
-							"No es pot cancel·lar el viatge amb menys de 48 hores d'antelació.");
-					return "redirect:/trips/booked";
-				}
-			}
+			return "redirect:/trips/booked";
+		} catch (HttpClientErrorException.UnprocessableEntity e) {
+			redirectAttributes.addFlashAttribute("error", "trips.cancellation.error");
+			return "redirect:/trips/booked";
 		}
-		tripService.track(cancellation);
-		return "redirect:/trips/booked";
 	}
 
 	@PostMapping("/done")
@@ -244,8 +238,7 @@ public class TripController {
 			tripService.track(done);
 			return "redirect:/trips/booked";
 		} catch (HttpClientErrorException.Forbidden e) {
-			String errorMessage = e.getResponseBodyAsString();
-			redirectAttributes.addFlashAttribute("error", "You can't finish a future trip");
+			redirectAttributes.addFlashAttribute("error", "trips.done.error");
 
 			return "redirect:/trips/booked";
 		}

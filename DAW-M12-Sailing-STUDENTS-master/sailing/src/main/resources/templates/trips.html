@@ -42,8 +42,9 @@
 		<section class="card my-1"
 			th:replace="~{fragments/template :: heading(#{trips.title})}">Trips</section>
 
-<div th:if="${errors}" class="alert alert-danger">
-			<p th:each="error : ${errors}" th:text="${error}"></p>
+<!-- Como recoger messages properties -->
+<div th:if="${error}" class="alert alert-danger">
+<p th:text="#{error}"></p>
 		</div>
 		<table  class="table table-striped table-bordered table-condensed table-responsive">
 		<thead>
