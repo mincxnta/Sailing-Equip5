@@ -16,9 +16,9 @@
 
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../static/css/main.css" />
-<title>New user</title>
+<title>Booking - W&W</title>
 </head>
-<body >
+<body>
 	<script th:src="@{/js/user.js}" src="../static/js/user.js"></script>
 
 	<section class="container">
@@ -28,11 +28,62 @@
 		<nav class="navbar navbar-default"
 			th:replace="~{fragments/template :: navbar}">Navbar</nav>
 
-		<section
+		<!-- <section
 			th:replace="~{fragments/template :: heading(#{book.heading})}"
-			class="card my-1">Booking</section>
+			class="card my-1">Booking</section> -->
 
-			<!-- /* TODO - Build a form to get the departure time of the trip (DON'T FORGET TO INCLUDE CSRF FIELD!! */ -->
+		<div class=" card my-1">
+			<h5 class="card-header">
+				<span th:text="#{book.heading}">Booking</span>
+			</h5>
+		</div>
+
+		<!-- /* TODO - Build a form to get the departure time of the trip (DON'T FORGET TO INCLUDE CSRF FIELD!! */ -->
+<div th:if="${errors}" class="alert alert-danger">
+			<p th:each="error : ${errors}" th:text="${error}"></p>
+		</div>
+		<form action="#" th:action="@{/trips/book/book_places}" th:object="${trip}" method="post" class="form-horizontal">
+
+			<div class="container col-md-12">
+
+				<div class="g-2 row">
+					<h4 th:text="#{${tripType.title}}" class="g-2 col">1 Hour Sailing Tour</h4>
+				</div>
+				<div class="g-2 row">
+					<h5 th:text="${#numbers.formatDecimal(tripType.price, 1, 'COMMA', 0, 'POINT')+ '€'} + ' - ' + ${tripType.duration} + ' ' + (${tripType.duration==1} ? #{parts.trip.hour} : #{parts.trip.hours})" class="g-2 col">30 € - 1 hour</h5>
+				</div>
+				<div class="g-2 row">
+					<div th:text="#{${tripType.description}}" class="g-2 col">1h Sailing Experience</div>
+				</div>
+				<div class="mt-4 g-2 row">
+					<h5 class="g-2 col-2" th:text="#{book.date}">Trip date</h5>
+					<div th:text="${#dates.format(trip.date,'dd-MM-yyyy')}" class="g-2 col-2">14/11/2024</div>
+				</div>
+				<div class="mt-4 g-2 row">
+					<h5 class="g-2 col" th:text="#{book.departure}">Departure</h5>
+				</div>
+				<div class="g-2 row">
+					<div class="g-2 col-3">
+						<label for="departure" class="form-label" th:text="#{book.departure.time}">Select trip departure:</label>
+					</div>
+				</div>
+				<div>
+					<div class="g-2 row">
+						<ul  th:if="${tripType.category.name() == 'GROUP'}" th:each="place, iStat  : ${freePlaces}">
+							<li class="form-check">
+								<input type="radio" class="form-check-input col-1" name="departure" th:id="'departure' + ${iStat.count}" th:value="${#dates.format(place.key,'HH:mm')}"> 
+								<label th:text="${#dates.format(place.key,'HH:mm')}" th:for="'departure' + ${iStat.count}"
+								class="form-check-label col-1">09:30</label> 
+								<span class="col-1" th:text="${place.value + ' places free'}">9 places free</span>
+							</li>
+						</ul>
+						<input th:if="${tripType.category.name() == 'PRIVATE'}" type="time" name="departure" id="departure" class="form-control form-control-sm w-auto">
+					</div>
+					<input th:value="#{book.next}" class="btn btn-success" type="submit">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+				</div>
+			</div>
+		</form>
 
 	</section>
 

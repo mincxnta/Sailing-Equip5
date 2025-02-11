@@ -19,10 +19,10 @@
 <title>Trips - W&W</title>
 </head>
 <body>
-<script type="text/javascript" th:src="@{/js/trips.js}"></script>
+
 
 	<!--/* TODO - Include AJAX script to load tracking */-->
-
+<script type="text/javascript" th:src="@{/js/trips.js}"></script>
 	<!--/* TODO - Include cancel trip dialog, if user has role CLIENT */-->
 <div sec:authorize="hasRole('CLIENT')" th:replace="~{fragments/dialogs :: cancel_trip_dialog}"></div>
 	<!--/* TODO - Include done trip dialog, if user has role ADMIN  */-->
@@ -40,39 +40,47 @@
 			th:replace="~{fragments/template :: navbar}">Navbar</nav>
 
 		<section class="card my-1"
-			th:replace="~{fragments/template :: heading('Trips')}">Trips</section>
+			th:replace="~{fragments/template :: heading(#{trips.title})}">Trips</section>
 
+<!-- Como recoger messages properties -->
+<div th:if="${error}" class="alert alert-danger">
+<p th:text="#{error}"></p>
+		</div>
 		<table  class="table table-striped table-bordered table-condensed table-responsive">
 		<thead>
 				<tr>
-					<th>#</th>
-					<th>Date</th>
-					<th>Departure</th>
-					<th>Places</th>
-					<th sec:authorize="hasRole('ADMIN')">Username</th>
-					<th>Type</th>
-					<th>Category</th>
-					<th>Status</th>
-					<th>Actions</th>
+					<th th:text="#{trips.table.head.id}">#</th>
+					<th th:text="#{trips.table.head.date}">Date</th>
+					<th th:text="#{trips.table.head.departure}">Departure</th>
+					<th th:text="#{trips.table.head.places}">Places</th>
+					<th th:text="#{trips.table.head.client_username}" sec:authorize="hasRole('ADMIN')">Username</th>
+					<th th:text="#{trips.table.head.type.title}">Type</th>
+					<th th:text="#{trips.table.head.type.category}">Category</th>
+					<th th:text="#{trips.table.head.status}">Status</th>
+					<th th:text="#{trips.table.head.actions}">Actions</th>
 				</tr>
 				</thead>
 				<tbody>
 				<tr th:each="trip, iStat  : ${booked_trips}">
 				<td th:text="${trip.id}"></td>
-				<td th:text="${trip.date}"></td>
-				<td th:text="${trip.departure}"></td>
+				<td th:text="${#dates.format(trip.date,'dd/MM/yyyy')}"></td>
+				<td th:text="${#dates.format(trip.departure,'HH:mm')}"></td>
 				<td th:text="${trip.places}"></td>
 				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
 				<td th:text="${tripTypes[trip.typeId].title}"></td> 
-    			<td th:text="${tripTypes[trip.typeId].category}"></td> 
-				<td> <a th:attr="data-bs-tripid=${trip.id}" th:text="${trip.status}" data-bs-toggle="modal" data-bs-target="#trackingDialog"></a></td>
-				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
+
+    			<td th:text="#{'trip.category.'+${tripTypes[trip.typeId].category}}"></td> 
+				<td><a th:text="#{'trip.status.'+${trip.status}}" th:onclick="|ajax_show_tracking('${trip.id}')|" th:class="${#strings.equals(trip.status, 'RESERVED')?'text-primary':
+					#strings.equals(trip.status, 'CANCELLED')?'text-danger':
+					#strings.equals(trip.status, 'DONE')?'text-success':'text-warning'}"></a></td>
+				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
+
 							<i class="bi bi-journals"> </i>
 						</button>
-						<button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
+						<button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
 							<i class="bi bi-journal-check"> </i>
 						</button>
-						<button sec:authorize="hasRole('CLIENT')" th:attr="data-bs-tripid=${trip.id}" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
+						<button sec:authorize="hasRole('CLIENT')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
 							<i class="bi bi-journal-x"> </i>
 						</button></td>
 				</tr>

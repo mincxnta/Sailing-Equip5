@@ -1,10 +1,13 @@
 package cat.institutmarianao.sailing.controllers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import cat.institutmarianao.sailing.model.Action;
 import cat.institutmarianao.sailing.model.BookedPlace;
@@ -68,38 +73,58 @@ public class TripController {
 
 	@GetMapping("/book/{trip_type_id}")
 	public ModelAndView bookSelectDate(@PathVariable(name = "trip_type_id", required = true) Long tripTypeId) {
+
+		// Obtenim l'usuari autenticat
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 		TripType triptype = tripService.getTripTypeById(tripTypeId);
+		Trip trip = new Trip();
+		trip.setTypeId(tripTypeId);
+		trip.setClientUsername(authentication.getName());
+		trip.setPlaces(0);
+
 		ModelAndView modelview = new ModelAndView("book_date");
-		modelview.getModelMap().addAttribute(triptype);
+		modelview.getModelMap().addAttribute("tripType", triptype);
+		modelview.getModelMap().addAttribute("trip", trip);
 		return modelview;
 	}
 
+	// TODO Preguntar al Toni cómo funcionan los private trips
 	@PostMapping("/book/book_departure")
 	public String bookSelectDeparture(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
 
-		// Validem si hi ha errors en el model
+		List<String> errors = new ArrayList<>();
+
 		if (result.hasErrors()) {
-			modelMap.addAttribute("errorMessage", "La data no és vàlida. Torna-ho a intentar.");
+			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+			modelMap.addAttribute("errors", errors);
 			return "book_date";
 		}
 
-		Date selectedDate = trip.getDate();
 		Date today = new Date();
 
-		if (selectedDate.before(today)) {
-			modelMap.addAttribute("errorMessage", "La data seleccionada ha de ser posterior a la data actual.");
+		if (trip.getDate().before(today)) {
+			// TODO Cómo mostrar
+			errors.add("book.error.futureDate");
+			modelMap.addAttribute("errors", errors);
 			return "book_date";
 		}
 
-		// Obtenim les places d'aquest tipus de viatge en la data escollida
-		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), selectedDate);
+		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
 		long maxPlaces = tripType.getMaxPlaces();
+		freePlaces.clear();
+		Set<Date> departures = new HashSet<>(tripType.getDepartures());
 
-		// TODO - Prepare a dialog to select a departure time for the booked trip
-		// TODO - Leave all free places for the selected trip in the selected departure
-		// date in session (freePlaces attribute)
+		for (Date departure : departures) {
+			long availablePlaces = maxPlaces;
+			for (BookedPlace bookedPlace : bookedPlaces) {
+				if (bookedPlace.getDeparture().equals(departure))
+					availablePlaces = maxPlaces - bookedPlace.getBookedPlaces();
+			}
+			freePlaces.put(departure, availablePlaces);
+		}
 		return "book_departure";
 	}
 
@@ -109,15 +134,26 @@ public class TripController {
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap) {
 
-		if (result.hasErrors()) {
-			return "book_departure";
+		List<String> errors = new ArrayList<>();
+
+		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
+		long reservedPlaces = 0;
+		for (BookedPlace bookedPlace : bookedPlaces) {
+			if (bookedPlace.getDeparture().equals(trip.getDeparture())) {
+				reservedPlaces = bookedPlace.getBookedPlaces();
+				break;
+			}
 		}
-		if (trip.getPlaces() > tripFreePlaces) {
-			modelMap.addAttribute("error", "No pots reservar més places de les disponibles.");
+
+		tripFreePlaces = tripType.getMaxPlaces() - reservedPlaces;
+		modelMap.addAttribute("tripFreePlaces", tripFreePlaces);
+
+		if (result.hasErrors()) {
+			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+			modelMap.addAttribute("errors", errors);
 			return "book_departure";
 		}
 
-		// TODO - Prepare a dialog to select places for the booked trip
 		return "book_places";
 	}
 
@@ -125,14 +161,22 @@ public class TripController {
 	public String bookSave(@Validated(OnTripCreate.class) @ModelAttribute("trip") Trip trip, BindingResult result,
 			@SessionAttribute("tripType") TripType tripType, @SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap, SessionStatus sessionStatus) {
-		// Torna a la vista de selecció de places si hi ha errors
-		if (result.hasErrors()) {
+		List<String> errors = new ArrayList<>();
+		try {
+
+			if (result.hasErrors()) {
+				result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+				modelMap.addAttribute("errors", errors);
+				return "book_places";
+			}
+			tripService.save(trip);
+			sessionStatus.setComplete();
+			return "redirect:/trips/booked";
+		} catch (HttpClientErrorException.UnprocessableEntity e) {
+			errors.add("book.error.places");
+			modelMap.addAttribute("errors", errors);
 			return "book_places";
 		}
-		Trip savedTrip = tripService.save(trip);
-		// Fa falta?
-		sessionStatus.setComplete();
-		return "redirect:/trips/booked";
 	}
 
 	@GetMapping("/booked")
@@ -150,31 +194,59 @@ public class TripController {
 
 		ModelAndView modelview = new ModelAndView("trips");
 
+		// Inicialitzar accions
+		Cancellation cancellation = new Cancellation();
+		Done done = new Done();
+		Rescheduling rescheduling = new Rescheduling();
+		String performer = authentication.getName();
+
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
 			modelview.getModelMap().addAttribute("booked_trips", tripService.findAll());
+
+			done.setPerformer(performer);
+			rescheduling.setPerformer(performer);
+			modelview.getModelMap().addAttribute("rescheduling", rescheduling);
+			modelview.getModelMap().addAttribute("done", done);
 		} else {
-			modelview.getModelMap().addAttribute("booked_trips",
-					tripService.findAllByClientUsername(authentication.getName()));
+			modelview.getModelMap().addAttribute("booked_trips", tripService.findAllByClientUsername(performer));
+
+			cancellation.setPerformer(authentication.getName());
+			modelview.getModelMap().addAttribute("cancellation", cancellation);
 		}
 		modelview.getModelMap().addAttribute("tripTypes", tripTypes);
+
 		return modelview;
 	}
 
-	// Com s’indica de quin viatge és?
 	@PostMapping("/cancel")
-	public String cancelTrip(@Validated Cancellation cancellation) {
-		tripService.track(cancellation);
-		return "redirect:/trips/booked";
+	public String cancelTrip(@Validated Cancellation cancellation, RedirectAttributes redirectAttributes) {
+		try {
+			cancellation.setDate(new Date());
+			tripService.track(cancellation);
+
+			return "redirect:/trips/booked";
+		} catch (HttpClientErrorException.UnprocessableEntity e) {
+			redirectAttributes.addFlashAttribute("error", "trips.cancellation.error");
+			return "redirect:/trips/booked";
+		}
 	}
 
 	@PostMapping("/done")
-	public String doneTrip(@Validated(OnActionCreate.class) Done done) {
-		tripService.track(done);
-		return "redirect:/trips/booked";
+	public String doneTrip(@Validated(OnActionCreate.class) Done done, RedirectAttributes redirectAttributes) {
+		try {
+			done.setDate(new Date());
+			tripService.track(done);
+			return "redirect:/trips/booked";
+		} catch (HttpClientErrorException.Forbidden e) {
+			redirectAttributes.addFlashAttribute("error", "trips.done.error");
+
+			return "redirect:/trips/booked";
+		}
 	}
 
 	@PostMapping("/reschedule")
 	public String saveAction(@Validated(OnActionCreate.class) Rescheduling rescheduling) {
+		rescheduling.setDate(new Date());
 		tripService.track(rescheduling);
 		return "redirect:/trips/booked";
 	}
@@ -182,8 +254,9 @@ public class TripController {
 	@GetMapping("/tracking/{id}")
 	public String showContentPart(@PathVariable(name = "id", required = true) @Positive Long id, ModelMap modelMap) {
 		List<Action> tracking = tripService.findTrackingById(id);
+		modelMap.addAttribute("tripId", id);
 		modelMap.addAttribute("tracking", tracking);
-		return "trips";
+		return "fragments/dialogs :: tracking_dialog_body";
 
 	}
 }

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import cat.institutmarianao.sailing.SailingApplication;
 import cat.institutmarianao.sailing.validation.groups.OnActionCreate;
 import cat.institutmarianao.sailing.validation.groups.OnActionUpdate;
 import cat.institutmarianao.sailing.validation.groups.OnTripCreate;
@@ -68,7 +67,7 @@ public abstract class Action implements Serializable {
 	protected String performer;
 
 	/* JSON */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SailingApplication.DATE_TIME_PATTERN)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	protected Date date = new Date();
 
 	/* Validation */
