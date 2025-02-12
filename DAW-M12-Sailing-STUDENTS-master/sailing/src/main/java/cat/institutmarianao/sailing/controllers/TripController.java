@@ -98,7 +98,7 @@ public class TripController {
 		List<String> errors = new ArrayList<>();
 
 		if (result.hasErrors()) {
-			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+			result.getAllErrors().forEach(error -> errors.add(error.getObjectName() + " " + error.getDefaultMessage()));
 			modelMap.addAttribute("errors", errors);
 			return "book_date";
 		}
