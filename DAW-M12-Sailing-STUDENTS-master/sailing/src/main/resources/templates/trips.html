@@ -2,7 +2,8 @@
 <html lang="en" xmlns:th="https://wwww.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{fragments/template :: head}">
+<!-- <head th:replace="~{fragments/template :: head}"> -->
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -13,22 +14,27 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/main.css}"
-	href="../static/css/main.css" />
+	href="../../static/css/main.css" />
 <title>Trips - W&W</title>
 </head>
+
 <body>
 
 
 	<!--/* TODO - Include AJAX script to load tracking */-->
-<script type="text/javascript" th:src="@{/js/trips.js}"></script>
+	<script type="text/javascript" th:src="@{/js/trips.js}"></script>
 	<!--/* TODO - Include cancel trip dialog, if user has role CLIENT */-->
-<div sec:authorize="hasRole('CLIENT')" th:replace="~{fragments/dialogs :: cancel_trip_dialog}"></div>
+	<div sec:authorize="hasRole('CLIENT')"
+		th:replace="~{fragments/dialogs :: cancel_trip_dialog}"></div>
 	<!--/* TODO - Include done trip dialog, if user has role ADMIN  */-->
-<div sec:authorize="hasRole('ADMIN')" th:replace="~{fragments/dialogs :: trip_done_dialog}"></div>
+	<div sec:authorize="hasRole('ADMIN')"
+		th:replace="~{fragments/dialogs :: trip_done_dialog}"></div>
 	<!--/* TODO - Include reschedule trip dialog, if user has role ADMIN  */-->
-<div sec:authorize="hasRole('ADMIN')" th:replace="~{fragments/dialogs :: reschedule_trip_dialog}"></div>
+	<div sec:authorize="hasRole('ADMIN')"
+		th:replace="~{fragments/dialogs :: reschedule_trip_dialog}"></div>
 	<!-- /* TODO - Include tracking dialog */ -->
 	<div th:replace="~{fragments/dialogs :: tracking_dialog}"></div>
 
@@ -42,49 +48,64 @@
 		<section class="card my-1"
 			th:replace="~{fragments/template :: heading(#{trips.title})}">Trips</section>
 
-<!-- Como recoger messages properties -->
-<div th:if="${error}" class="alert alert-danger">
-<p th:text="#{error}"></p>
+		<!-- Como recoger messages properties -->
+		<div th:if="${error}" class="alert alert-danger">
+			<p th:text="#{error}"></p>
 		</div>
-		<table  class="table table-striped table-bordered table-condensed table-responsive">
-		<thead>
+		<table
+			class="table table-striped table-bordered table-condensed table-responsive">
+			<thead>
 				<tr>
 					<th th:text="#{trips.table.head.id}">#</th>
 					<th th:text="#{trips.table.head.date}">Date</th>
 					<th th:text="#{trips.table.head.departure}">Departure</th>
 					<th th:text="#{trips.table.head.places}">Places</th>
-					<th th:text="#{trips.table.head.client_username}" sec:authorize="hasRole('ADMIN')">Username</th>
+					<th th:text="#{trips.table.head.client_username}"
+						sec:authorize="hasRole('ADMIN')">Username</th>
 					<th th:text="#{trips.table.head.type.title}">Type</th>
 					<th th:text="#{trips.table.head.type.category}">Category</th>
 					<th th:text="#{trips.table.head.status}">Status</th>
 					<th th:text="#{trips.table.head.actions}">Actions</th>
 				</tr>
-				</thead>
-				<tbody>
+			</thead>
+			<tbody>
 				<tr th:each="trip, iStat  : ${booked_trips}">
-				<td th:text="${trip.id}"></td>
-				<td th:text="${#dates.format(trip.date,'dd/MM/yyyy')}"></td>
-				<td th:text="${#dates.format(trip.departure,'HH:mm')}"></td>
-				<td th:text="${trip.places}"></td>
-				<td sec:authorize="hasRole('ADMIN')" th:text="${trip.clientUsername}"></td>
-				<td th:text="${tripTypes[trip.typeId].title}"></td> 
+					<td th:text="${trip.id}"></td>
+					<td th:text="${#dates.format(trip.date,'dd/MM/yyyy')}"></td>
+					<td th:text="${#dates.format(trip.departure,'HH:mm')}"></td>
+					<td th:text="${trip.places}"></td>
+					<td sec:authorize="hasRole('ADMIN')"
+						th:text="${trip.clientUsername}"></td>
+					<td th:text="${tripTypes[trip.typeId].title}"></td>
 
-    			<td th:text="#{'trip.category.'+${tripTypes[trip.typeId].category}}"></td> 
-				<td><a th:text="#{'trip.status.'+${trip.status}}" th:onclick="|ajax_show_tracking('${trip.id}')|" th:class="${#strings.equals(trip.status, 'RESERVED')?'text-primary':
+					<td
+						th:text="#{'trip.category.'+${tripTypes[trip.typeId].category}}"></td>
+					<td><a th:text="#{'trip.status.'+${trip.status}}"
+						th:onclick="|ajax_show_tracking('${trip.id}')|"
+						th:class="${#strings.equals(trip.status, 'RESERVED')?'text-primary':
 					#strings.equals(trip.status, 'CANCELLED')?'text-danger':
 					#strings.equals(trip.status, 'DONE')?'text-success':'text-warning'}"></a></td>
-				<td><button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleTripDialog">
+					<td><button sec:authorize="hasRole('ADMIN')"
+							th:attr="data-bs-tripId=${trip.id}" type="button"
+							class="btn btn-warning btn-sm" data-bs-toggle="modal"
+							data-bs-target="#rescheduleTripDialog">
 
 							<i class="bi bi-journals"> </i>
 						</button>
-						<button sec:authorize="hasRole('ADMIN')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tripDoneDialog">
+						<button sec:authorize="hasRole('ADMIN')"
+							th:attr="data-bs-tripId=${trip.id}" type="button"
+							class="btn btn-success btn-sm" data-bs-toggle="modal"
+							data-bs-target="#tripDoneDialog">
 							<i class="bi bi-journal-check"> </i>
 						</button>
-						<button sec:authorize="hasRole('CLIENT')" th:attr="data-bs-tripId=${trip.id}" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelTripDialog">
+						<button sec:authorize="hasRole('CLIENT')"
+							th:attr="data-bs-tripId=${trip.id}" type="button"
+							class="btn btn-danger btn-sm" data-bs-toggle="modal"
+							data-bs-target="#cancelTripDialog">
 							<i class="bi bi-journal-x"> </i>
 						</button></td>
 				</tr>
-				</tbody>
+			</tbody>
 		</table>
 	</section>
 </body>

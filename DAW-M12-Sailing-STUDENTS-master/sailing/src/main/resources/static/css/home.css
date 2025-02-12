@@ -1,0 +1,11 @@
+a, input{
+	background-color: #3B82F6;
+	padding: 0.375rem 0.75rem ;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	border: 1px solid #3B82F6;
+	border-radius: 0.375rem;
+	color: white;
+	text-decoration: none;
+}

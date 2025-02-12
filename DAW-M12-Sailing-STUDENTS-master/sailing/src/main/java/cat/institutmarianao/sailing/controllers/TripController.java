@@ -73,7 +73,6 @@ public class TripController {
 
 	@GetMapping("/book/{trip_type_id}")
 	public ModelAndView bookSelectDate(@PathVariable(name = "trip_type_id", required = true) Long tripTypeId) {
-
 		// Obtenim l'usuari autenticat
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -87,6 +86,7 @@ public class TripController {
 		modelview.getModelMap().addAttribute("tripType", triptype);
 		modelview.getModelMap().addAttribute("trip", trip);
 		return modelview;
+		// TODO Error trip type not found
 	}
 
 	// TODO Preguntar al Toni cómo funcionan los private trips
