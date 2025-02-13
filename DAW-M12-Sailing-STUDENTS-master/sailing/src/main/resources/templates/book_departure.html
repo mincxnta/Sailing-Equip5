@@ -40,9 +40,9 @@
 			</h5>
 		</div>
 
-		<!-- /* TODO - Build a form to get the departure time of the trip (DON'T FORGET TO INCLUDE CSRF FIELD!! */ -->
-<div th:if="${errors}" class="alert alert-danger">
-			<p th:each="error : ${errors}" th:text="${error}"></p>
+<!-- TODO Preguntar al Toni cómo mostrar los errores -->
+<div th:if="${errors}"  class="alert alert-danger">
+			<p th:each="error : ${errors}" th:text="#{${error}}"></p>
 		</div>
 		<form action="#" th:action="@{/trips/book/book_places}" th:object="${trip}" method="post" class="form-horizontal">
 

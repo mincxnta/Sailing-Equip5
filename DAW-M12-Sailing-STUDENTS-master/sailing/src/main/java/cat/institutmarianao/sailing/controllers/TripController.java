@@ -89,7 +89,6 @@ public class TripController {
 		// TODO Error trip type not found
 	}
 
-	// TODO Preguntar al Toni cómo funcionan los private trips
 	@PostMapping("/book/book_departure")
 	public String bookSelectDeparture(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,

@@ -9,3 +9,14 @@ a, input{
 	color: white;
 	text-decoration: none;
 }
+
+.card-body a{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin: 10px;
+}
+
+.card{
+	height: 100%;
+}
