@@ -18,10 +18,12 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../../static/css/main.css" />
+<link rel="stylesheet" th:href="@{/css/forms.css}"
+	href="../../static/css/forms.css" />
 <title>Title</title>
 </head>
 <body>
-	<section class="container">
+	<section class="container login">
 		<header th:replace="~{fragments/template :: header}" class="jumbotron">
 			Shipments Header </header>
 
@@ -30,54 +32,47 @@
 
 		<form th:action="@{/login}" action="#" method="post">
 
-			<div class="container g-2">
-				<div class="row justify-content-center overflow-hidden">
-					<div class="col-sm-9 col-md-7 col-lg-5 col-xl-4 gy-5">
+			<div class="container">
 
-						<div class="card">
 
-							<div class="card-header">
-								<h5 th:text="#{login.give.credentials}" class="card-title">Please,
-									enter your credentials</h5>
-							</div>
+				<div class="login">
 
-							<div class="card-body">
+					<h1 th:text="#{login.give.credentials}">Please, enter your
+						credentials</h1>
 
-								<div th:if="${not #lists.isEmpty(error)}"
-									class="alert alert-danger alert-dismissible" role="alert">
-									<span th:text="#{login.credentials.failure}">The given
-										credentials are wrong</span>
-									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-								</div>
-
-								<div class="input-group py-1">
-									<span class="input-group-text"> <i
-										class="bi bi-person-fill"></i>
-									</span> <input th:placeholder="#{login.username}" type="text"
-										name="username" placeholder="Username" class="form-control">
-								</div>
-
-								<div class="input-group py-1">
-									<span class="input-group-text"> <i
-										class="bi bi-key-fill"></i>
-									</span> <input th:placeholder="#{login.password}" type="password"
-										name="password" placeholder="Password" class="form-control">
-								</div>
-
-							</div>
-
-							<div class="card-footer d-grid">
-								<input th:value="#{login.login}" type="submit" value="Login"
-									class="btn btn-success">
-							</div>
-
-						</div>
-						<a  th:href="@{/users/new/client}"> <i
-							class="bi bi-plus-circle"></i> <span
-							th:text="#{login.new.account}">Do not have account? Click here</span>
-						</a>
+					<div th:if="${not #lists.isEmpty(error)}"
+						class="alert alert-danger alert-dismissible" role="alert">
+						<span th:text="#{login.credentials.failure}">The given
+							credentials are wrong</span>
+						<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 					</div>
+
+					<label for="username" th:text="#{login.username}"></label>
+					<div class="input-group py-1">
+						<span class="input-group-text"> <i
+							class="bi bi-person-fill"></i>
+						</span> <input th:placeholder="#{login.username}" type="text"
+							name="username" placeholder="Username" class="form-control">
+					</div>
+
+					<label for="username" th:text="#{login.password}"></label>
+					<div class="input-group py-1">
+						<span class="input-group-text"> <i class="bi bi-key-fill"></i>
+						</span> <input th:placeholder="#{login.password}" type="password"
+							name="password" placeholder="Password" class="form-control">
+					</div>
+
+
+					<input th:value="#{login.login}" type="submit" value="Login"
+						class="btn btn-success">
+						<div> 
+						<span th:text="#{login.no.account}">Do not have account? Click
+						here</span><a th:href="@{/users/new/client}" th:text="#{login.new.account}"> </a>
+						</div>
 				</div>
+
+			</div>
+			</div>
 			</div>
 		</form>
 	</section>

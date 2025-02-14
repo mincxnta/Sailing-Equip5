@@ -1,0 +1,38 @@
+div.login,div.register{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 30px 80px;
+	background-color: white;
+	border: 1px solid rgba(0, 0, 0, 0.175);
+	border-radius: 0.375rem;
+
+}
+
+div.register{
+	margin-top:20px;
+}
+
+section.container.login div.container{
+	height: 60vh;
+}
+
+.input-group,input[type=submit]{
+	margin-bottom: 15px;
+}
+
+h1{
+	margin-bottom: 30px;
+}
+
+div.container{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	flex-direction: column;
+}
+
+label{
+	align-self: flex-start;
+}

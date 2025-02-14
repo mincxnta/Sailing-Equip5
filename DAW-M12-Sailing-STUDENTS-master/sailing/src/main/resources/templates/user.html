@@ -18,60 +18,59 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../../static/css/main.css" />
+<link rel="stylesheet" th:href="@{/css/forms.css}"
+	href="../../static/css/forms.css" />
 <title>New user</title>
 </head>
 <body onload="roleFields()">
 	<script th:src="@{/js/user.js}" type="text/javascript"
 		src="../static/js/user.js"></script>
-		
-	<section class="container">
+
+	<section class="container register">
 		<header class="jumbotron" th:replace="~{fragments/template :: header}">
 			Shipments Header </header>
 
 		<nav class="navbar navbar-default"
 			th:replace="~{fragments/template :: navbar}">Navbar</nav>
 
-		<section
+		<!-- <section
 			th:replace="~{fragments/template :: heading(#{user.heading})}"
-			class="card my-1">User</section>
+			class="card my-1">User</section> -->
 
 		<form th:with="action=${edit?'/users/edit':'/users/new'}"
 			th:action="@{${action}}" th:object="${userForm}" action="#"
 			method="post" class="form-horizontal">
 
 			<div class="container px-4">
-				<div class="row">
+			<div th:if="${#fields.hasAnyErrors()}"
+						class="row alert alert-danger alert-dismissible mt-1" role="alert">
 
-					<div class="g-2 col-md-8">
-						<div th:if="${#fields.hasAnyErrors()}"
-							class="row alert alert-danger alert-dismissible  p-1"
-							role="alert">
-
-							<ul>
-								<li th:each="err : ${#fields.detailedErrors()}"
-									th:class="${err.global} ? fst-italic"><span
-									th:text="${err.global}? '*' : #{'user.'+${err.fieldName}}">
-										Username </span>: <span th:utext="${err.message}">el tamaño
-										debe estar entre 2 y 25</span></li>
-							</ul>
-							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-						</div>
-
+						<ul>
+							<li th:each="err : ${#fields.detailedErrors()}"
+								th:class="${err.global} ? fst-italic"><span
+								th:text="${err.global}? '*' : #{'user.'+${err.fieldName}}">
+									Username </span>: <span th:utext="${err.message}">el tamaño
+									debe estar entre 2 y 25</span></li>
+						</ul>
+						<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 					</div>
-				</div>
+				<div class="register">
+				<h1 th:text="#{login.register}">Please, enter your	credentials</h1>
+					<!--<div class="g-2 col-md-8">-->
+					
 
-				<div class="row">
-
-					<label class="form-label g-2 col-md-1 p-1" for="username"
-						th:text="#{user.username}">Username</label>
-					<div class="g-2 col-md-3">
-						<input th:if="${edit}" th:field="*{username}" id="username"
-							class="form-control" readonly="readonly" value="pedro" /> <input
-							th:if="not ${edit}" th:field="*{username}"
-							th:placeholder="#{user.username.placeholder}"
-							th:errorclass="'is-invalid'" id="username" placeholder="Username"
-							class="form-control" />
-					</div>
+					<label class="form-label" for="username" th:text="#{user.username}">Username</label>
+					<!--<div class="g-2 col-md-3">-->
+					<div class="input-group"><span class="input-group-text"> <i
+							class="bi bi-person-fill"></i>
+						</span>
+					<input th:if="${edit}" th:field="*{username}" id="username"
+						class="form-control" readonly="readonly" value="pedro" /> <input
+						th:if="not ${edit}" th:field="*{username}"
+						th:placeholder="#{user.username.placeholder}"
+						th:errorclass="'is-invalid'" id="username" placeholder="Username"
+						class="form-control" /></div>
+					<!--</div>-->
 
 					<input id="role" type="hidden" th:field="*{role}"
 						th:value="*{role}" sec:authorize="not hasRole('ADMIN')" /> <label
@@ -91,61 +90,50 @@
 						</select>
 					</div>
 
-				</div>
 
-				<div class="row">
+					<label class="form-label" for="password" th:text="#{user.password}">Password</label>
 
-					<label class="form-label g-2 col-md-1 p-1" for="password"
-						th:text="#{user.password}">Password</label>
-					<div class="g-2 col-md-3">
-						<input type="password" id="password" th:field="*{password}"
-							class="form-control" th:errorclass="'is-invalid'"
-							th:placeholder="#{user.password.placeholder}"
-							placeholder="Password" />
-					</div>
+<div class="input-group"><span class="input-group-text"> <i
+							class="bi bi-person-fill"></i>
+						</span>
+					<input type="password" id="password" class="form-control"
+						th:field="*{password}" th:errorclass="'is-invalid'"
+						th:placeholder="#{user.password.placeholder}"
+						placeholder="Password" /> <label class="form-label" for="verify"
+						th:text="#{user.verify}">Verify</label> <input type="password"
+						id="verify" th:field="*{verify}" class="form-control"
+						th:errorclass="'is-invalid'"
+						th:placeholder="#{user.verify.placeholder}" placeholder="Verify" />
 
-					<label class="form-label g-2 col-md-1 p-1" for="verify"
-						th:text="#{user.verify}">Verify</label>
-					<div class="g-2 col-md-3">
-						<input type="password" id="verify" th:field="*{verify}"
-							class="form-control" th:errorclass="'is-invalid'"
-							th:placeholder="#{user.verify.placeholder}" placeholder="Verify" />
-					</div>
+					
 
-				</div>
-
-				<div id="clientFields" class="row">
-
-					<label class="form-label g-2 col-md-1 p-1" for="fullName"
-						th:text="#{user.fullName}">Full name</label>
-					<div class="g-2 col-md-4">
-						<input id="fullName" th:field="*{fullName}" class="form-control"
+						<label class="form-label" for="fullName"
+							th:text="#{user.fullName}">Full name</label> <input id="fullName"
+							th:field="*{fullName}" class="form-control"
 							th:errorclass="'is-invalid'"
 							th:placeholder="#{user.fullName.placeholder}"
-							placeholder="Full name" />
-					</div>
-					<label class="form-label g-2 col-md-1 p-1" for="phone"
-						th:text="#{user.phone}">Phone</label>
-					<div class="g-2 col-md-2">
-						<input id="phone" th:field="*{phone}" class="form-control"
+							placeholder="Full name" /> <label
+							class="form-label g-2 col-md-1 p-1" for="phone"
+							th:text="#{user.phone}">Phone</label> <input id="phone"
+							th:field="*{phone}" class="form-control input-group"
 							th:errorclass="'is-invalid'"
 							th:placeholder="#{user.phone.placeholder}"
 							placeholder="333 33 33" />
+
+					
+
+					<div class="row">
+						<div class="g-2 col-md-1">
+							<input th:if="${edit}" class="btn btn-success" type="submit"
+								th:value="#{user.update}" value="Update" /> <input
+								th:if="not ${edit}" class="btn btn-success" type="submit"
+								th:value="#{user.add.new}" value="Add" />
+						</div>
 					</div>
 
+					<input type="hidden" name="${_csrf.parameterName}"
+						value="${_csrf.token}" />
 				</div>
-
-				<div class="row">
-					<div class="g-2 col-md-1">
-						<input th:if="${edit}" class="btn btn-success" type="submit"
-							th:value="#{user.update}" value="Update" /> <input
-							th:if="not ${edit}" class="btn btn-success" type="submit"
-							th:value="#{user.add.new}" value="Add" />
-					</div>
-				</div>
-
-				<input type="hidden" name="${_csrf.parameterName}"
-					value="${_csrf.token}" />
 			</div>
 		</form>
 	</section>
