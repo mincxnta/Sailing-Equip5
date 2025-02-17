@@ -18,30 +18,9 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../../static/css/main.css" />
+<link rel="stylesheet" th:href="@{/css/booking.css}"
+	href="../../static/css/booking.css" />
 <title>Booking - W&W</title>
-<style>
-    input[type="radio"] {
-        display: none;
-    }
-    label.btn-radio {
-        display: inline-block;
-        padding: 10px 20px;
-        margin: 5px;
-        cursor: pointer;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f8f9fa;
-        transition: background-color 0.3s;
-    }
-    input[type="radio"]:checked + label.btn-radio {
-        background-color: #28a745;
-        color: white;
-        border-color: #28a745;
-    }
-    label.btn-radio:hover {
-        background-color: #e9ecef;
-    }
-</style>
 </head>
 <body>
 	<script th:src="@{/js/user.js}" src="../static/js/user.js"></script>
@@ -88,10 +67,11 @@
 					<div th:text="#{${tripType.description}}" class="g-2 col">1h
 						Sailing Experience</div>
 				</div>
-				<div class="mt-4 g-2 row">
+				<div class="mt-4 g-2 departure-details">
 					<h5 class="g-2 col-2" th:text="#{book.date}">Trip date</h5>
-					<div th:text="${#dates.format(trip.date,'dd-MM-yyyy')}"
-						class="g-2 col-2">14/11/2024</div>
+					<i class="icon bi bi-calendar-event-fill"></i><span
+						th:text="${#dates.format(trip.date,'dd-MM-yyyy')}"
+						class="g-2 col-2"></span>
 				</div>
 				<div class="mt-4 g-2 row">
 					<h5 class="g-2 col" th:text="#{book.departure}">Departure</h5>
@@ -111,9 +91,10 @@
 								th:id="'departure' + ${iStat.count}"
 								th:value="${#dates.format(place.key,'HH:mm')}"> <label
 								th:text="${#dates.format(place.key,'HH:mm')}"
-								th:for="'departure' + ${iStat.count}"
-								class="btn-radio col-1">>09:30</label> <span class="col-1"
-								th:text="${place.value + ' places free'}">9 places free</span></li>
+								th:for="'departure' + ${iStat.count}" class="btn-radio">>09:30</label>
+								<i class="icon bi bi-person-fill"></i>
+								<span class="col-1" th:text="${place.value + ' places free'}">9
+									places free</span></li>
 						</ul>
 						<input th:if="${tripType.category.name() == 'PRIVATE'}"
 							type="time" name="departure" id="departure"

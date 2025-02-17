@@ -1,6 +1,6 @@
-a, input{
+a, input {
 	background-color: #3B82F6;
-	padding: 0.375rem 0.75rem ;
+	padding: 0.375rem 0.75rem;
 	font-size: 1rem;
 	font-weight: 400;
 	line-height: 1.5;
@@ -10,13 +10,19 @@ a, input{
 	text-decoration: none;
 }
 
-.card-body a{
+.card-body a {
 	position: absolute;
 	bottom: 0;
 	right: 0;
 	margin: 10px;
 }
 
-.card{
+.card {
 	height: 100%;
+}
+
+div.card-body a:hover {
+	background-color: #155173;
+	border-color: #155173;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
 }

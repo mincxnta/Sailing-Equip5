@@ -18,6 +18,8 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../../static/css/main.css" />
+<link rel="stylesheet" th:href="@{/css/booking.css}"
+	href="../../static/css/booking.css" />
 
 <title>Booking - W&W</title>
 </head>
@@ -41,14 +43,15 @@
 				<span th:text="#{book.heading}">Booking</span>
 			</h5>
 		</div>
-		
+
 		<form th:action="@{/trips/book/book_departure}" method="post"
 			class="form-horizontal" th:object="${trip}">
-<div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
-<ul>
-			<li th:each="error : ${#fields.detailedErrors() }" th:text="${error.message}"></li>
-			</ul>
-		</div>
+			<div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+				<ul>
+					<li th:each="error : ${#fields.detailedErrors() }"
+						th:text="${error.message}"></li>
+				</ul>
+			</div>
 			<div class="container col-md-12">
 
 				<div class="g-2 row">
@@ -78,8 +81,7 @@
 				</div>
 				<div class="g-2 row">
 					<div class="g-2">
-						<input th:value="#{book.next}" 
-							type="submit">
+						<input th:value="#{book.next}" type="submit">
 					</div>
 				</div>
 

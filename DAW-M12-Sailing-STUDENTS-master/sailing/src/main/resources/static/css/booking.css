@@ -1,3 +1,53 @@
-body{
-	background-color: red;
+input[type=submit] {
+	background-color: #3B82F6;
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	border: 1px solid #3B82F6;
+	border-radius: 0.375rem;
+	color: white;
+	text-decoration: none;
+}
+
+input[type=time] {
+	margin-left: 4px;
+	margin-bottom: 1em;
+}
+
+.icon {
+	margin-right: 1%;
+}
+
+.departure-details {
+	display: flex;
+}
+
+input[type="radio"] {
+	display: none;
+}
+
+label.btn-radio {
+	background-color: white;
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	border: 1px solid #3B82F6;
+	border-radius: 0.375rem;
+	color: 3B82F6;
+	text-decoration: none;
+	transition: background-color 0.2s ease, color 0.2s ease;
+	margin-right: 2%;
+}
+
+input[type="radio"]:checked+label.btn-radio {
+	background-color: #3B82F6;
+	color: white;
+	border-color: #3B82F6;
+}
+
+label.btn-radio:hover {
+	background-color: #8db5f4;
+	color: white;
 }

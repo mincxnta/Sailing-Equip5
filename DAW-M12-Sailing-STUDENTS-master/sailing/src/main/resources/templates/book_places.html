@@ -18,6 +18,8 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../../static/css/main.css" />
+<link rel="stylesheet" th:href="@{/css/booking.css}"
+	href="../../static/css/booking.css" />
 <title>Booking - W&W</title>
 </head>
 <body>
@@ -64,15 +66,19 @@
 					<div th:text="#{${tripType.description}}" class="g-2 col">1h
 						Sailing Experience</div>
 				</div>
-				<div class="mt-4 g-2 row">
+				<div class="mt-4 g-2 departure-details">
 					<h5 class="g-2 col-2" th:text="#{book.date}">Trip date</h5>
-					<div th:text="${#dates.format(trip.date,'dd-MM-yyyy')}"
-						class="g-2 col-2">14/11/2024</div>
+					<div class="g-2 col-2">
+						<i class="icon bi bi-calendar-event-fill"></i><span
+							th:text="${#dates.format(trip.date,'dd-MM-yyyy')}">25-10-2025</span>
+					</div>
 				</div>
-				<div class="g-2 row">
+				<div class="g-2 row departure-details">
 					<h5 class="g-2 col-2" th:text="#{book.departure}">Departure</h5>
-					<div th:text="${#dates.format(trip.departure,'HH:mm')}"
-						class="g-2 col-2">13:30</div>
+					<div class="g-2 col-2">
+						<i class="icon bi bi-clock-fill"></i><span
+							th:text="${#dates.format(trip.departure,'HH:mm')}"> 11:30</span>
+					</div>
 				</div>
 				<div class="g-2 row">
 					<h5 class="g-2 col-2">
@@ -83,9 +89,11 @@
 							th:max="${tripFreePlaces}" class="form-input" name="places"
 							value="1">
 					</div>
-					<div class="g-2 col-5"
-						th:text="#{book.free.places(${tripFreePlaces})}">9 places
-						free</div>
+					<div class="g-2 col-5">
+						<i class="icon bi bi-person-fill"></i><span
+							th:text="#{book.free.places(${tripFreePlaces})}">9 places
+							free</span>
+					</div>
 				</div>
 				<div class="g-2 row">
 					<div class="g-2">
