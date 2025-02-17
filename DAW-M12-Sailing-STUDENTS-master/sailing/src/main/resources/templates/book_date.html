@@ -41,13 +41,14 @@
 				<span th:text="#{book.heading}">Booking</span>
 			</h5>
 		</div>
-		<div th:if="${errors}" class="alert alert-danger">
-			<p th:each="error : ${errors}" th:text="${error}"></p>
-		</div>
-
+		
 		<form th:action="@{/trips/book/book_departure}" method="post"
-			class="form-horizontal">
-
+			class="form-horizontal" th:object="${trip}">
+<div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+<ul>
+			<li th:each="error : ${#fields.detailedErrors() }" th:text="${error.message}"></li>
+			</ul>
+		</div>
 			<div class="container col-md-12">
 
 				<div class="g-2 row">

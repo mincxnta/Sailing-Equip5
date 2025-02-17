@@ -86,7 +86,6 @@ public class TripController {
 		modelview.getModelMap().addAttribute("tripType", triptype);
 		modelview.getModelMap().addAttribute("trip", trip);
 		return modelview;
-		// TODO Error trip type not found
 	}
 
 	@PostMapping("/book/book_departure")
@@ -94,20 +93,7 @@ public class TripController {
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
 
-		List<String> errors = new ArrayList<>();
-
 		if (result.hasErrors()) {
-			result.getAllErrors().forEach(error -> errors.add(error.getObjectName() + " " + error.getDefaultMessage()));
-			modelMap.addAttribute("errors", errors);
-			return "book_date";
-		}
-
-		Date today = new Date();
-
-		if (trip.getDate().before(today)) {
-			// TODO Cómo mostrar
-			errors.add("book.error.futureDate");
-			modelMap.addAttribute("errors", errors);
 			return "book_date";
 		}
 
@@ -133,8 +119,6 @@ public class TripController {
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces,
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap) {
 
-		List<String> errors = new ArrayList<>();
-
 		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
 		long reservedPlaces = 0;
 		for (BookedPlace bookedPlace : bookedPlaces) {
@@ -148,8 +132,6 @@ public class TripController {
 		modelMap.addAttribute("tripFreePlaces", tripFreePlaces);
 
 		if (result.hasErrors()) {
-			result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-			modelMap.addAttribute("errors", errors);
 			return "book_departure";
 		}
 
@@ -164,8 +146,6 @@ public class TripController {
 		try {
 
 			if (result.hasErrors()) {
-				result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-				modelMap.addAttribute("errors", errors);
 				return "book_places";
 			}
 			tripService.save(trip);
@@ -244,10 +224,21 @@ public class TripController {
 	}
 
 	@PostMapping("/reschedule")
-	public String saveAction(@Validated(OnActionCreate.class) Rescheduling rescheduling) {
-		rescheduling.setDate(new Date());
-		tripService.track(rescheduling);
-		return "redirect:/trips/booked";
+	public String saveAction(@Validated(OnActionCreate.class) Rescheduling rescheduling,
+			RedirectAttributes redirectAttributes) {
+		try {
+			rescheduling.setDate(new Date());
+			tripService.track(rescheduling);
+			return "redirect:/trips/booked";
+		} catch (HttpClientErrorException.UnprocessableEntity e) {
+			if (e.getMessage().contains("newDate")) {
+				redirectAttributes.addFlashAttribute("error", "trips.reschedule.date.error");
+			} else if (e.getMessage().contains("newDeparture")) {
+				redirectAttributes.addFlashAttribute("error", "trips.reschedule.departure.error");
+			}
+
+			return "redirect:/trips/booked";
+		}
 	}
 
 	@GetMapping("/tracking/{id}")

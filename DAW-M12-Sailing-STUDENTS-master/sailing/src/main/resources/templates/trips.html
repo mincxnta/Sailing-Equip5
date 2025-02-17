@@ -22,20 +22,13 @@
 </head>
 
 <body>
-
-
-	<!--/* TODO - Include AJAX script to load tracking */-->
 	<script type="text/javascript" th:src="@{/js/trips.js}"></script>
-	<!--/* TODO - Include cancel trip dialog, if user has role CLIENT */-->
 	<div sec:authorize="hasRole('CLIENT')"
 		th:replace="~{fragments/dialogs :: cancel_trip_dialog}"></div>
-	<!--/* TODO - Include done trip dialog, if user has role ADMIN  */-->
 	<div sec:authorize="hasRole('ADMIN')"
 		th:replace="~{fragments/dialogs :: trip_done_dialog}"></div>
-	<!--/* TODO - Include reschedule trip dialog, if user has role ADMIN  */-->
 	<div sec:authorize="hasRole('ADMIN')"
 		th:replace="~{fragments/dialogs :: reschedule_trip_dialog}"></div>
-	<!-- /* TODO - Include tracking dialog */ -->
 	<div th:replace="~{fragments/dialogs :: tracking_dialog}"></div>
 
 	<section class="container">
@@ -48,7 +41,6 @@
 		<section class="card my-1"
 			th:replace="~{fragments/template :: heading(#{trips.title})}">Trips</section>
 
-		<!-- Como recoger messages properties -->
 		<div th:if="${error}" class="alert alert-danger">
 			<p th:text="#{${error}}"></p>
 		</div>

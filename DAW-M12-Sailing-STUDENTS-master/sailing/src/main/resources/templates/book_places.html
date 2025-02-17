@@ -38,33 +38,41 @@
 			</h5>
 		</div>
 
-		<!-- /* TODO - Build a form to get the booked places of the trip (DON'T FORGET TO INCLUDE CSRF FIELD!! */ -->
-
-<div th:if="${errors}" class="alert alert-danger">
-			<p th:each="error : ${errors}" th:text="${error}"></p>
-		</div>
-		
-		<form action="#" th:action="@{/trips/book/book_save}"
-			method="post" class="form-horizontal">
+		<form action="#" th:action="@{/trips/book/book_save}" method="post"
+			th:object="${trip}" class="form-horizontal">
+			<div th:if="${#fields.hasAnyErrors() or errors != null}"
+				class="alert alert-danger">
+				<ul>
+					<li th:each="error : ${#fields.detailedErrors() }"
+						th:text="${error.message}"></li>
+					<li th:each="error : ${errors}" th:text="#{${error}}"></li>
+				</ul>
+			</div>
 
 			<div class="container col-md-12">
 
 				<div class="g-2 row">
-					<h4 th:text="#{${tripType.title}}" class="g-2 col">1 Hour Sailing Tour</h4>
+					<h4 th:text="#{${tripType.title}}" class="g-2 col">1 Hour
+						Sailing Tour</h4>
 				</div>
 				<div class="g-2 row">
-					<h5 th:text="${#numbers.formatDecimal(tripType.price, 1, 'COMMA', 0, 'POINT')+ '€'} + ' - ' + ${tripType.duration} + ' ' + (${tripType.duration==1} ? #{parts.trip.hour} : #{parts.trip.hours})" class="g-2 col">30 € - 1 hour</h5>
+					<h5
+						th:text="${#numbers.formatDecimal(tripType.price, 1, 'COMMA', 0, 'POINT')+ '€'} + ' - ' + ${tripType.duration} + ' ' + (${tripType.duration==1} ? #{parts.trip.hour} : #{parts.trip.hours})"
+						class="g-2 col">30 € - 1 hour</h5>
 				</div>
 				<div class="g-2 row">
-					<div th:text="#{${tripType.description}}" class="g-2 col">1h Sailing Experience</div>
+					<div th:text="#{${tripType.description}}" class="g-2 col">1h
+						Sailing Experience</div>
 				</div>
 				<div class="mt-4 g-2 row">
 					<h5 class="g-2 col-2" th:text="#{book.date}">Trip date</h5>
-					<div th:text="${#dates.format(trip.date,'dd-MM-yyyy')}" class="g-2 col-2">14/11/2024</div>
+					<div th:text="${#dates.format(trip.date,'dd-MM-yyyy')}"
+						class="g-2 col-2">14/11/2024</div>
 				</div>
 				<div class="g-2 row">
 					<h5 class="g-2 col-2" th:text="#{book.departure}">Departure</h5>
-					<div th:text="${#dates.format(trip.departure,'HH:mm')}" class="g-2 col-2">13:30</div>
+					<div th:text="${#dates.format(trip.departure,'HH:mm')}"
+						class="g-2 col-2">13:30</div>
 				</div>
 				<div class="g-2 row">
 					<h5 class="g-2 col-2">
@@ -72,13 +80,17 @@
 					</h5>
 					<div class="g-2 col-1">
 						<input id="places" type="number" min="1"
-							th:max="${tripFreePlaces}" class="form-input" name="places" value="1">
+							th:max="${tripFreePlaces}" class="form-input" name="places"
+							value="1">
 					</div>
-					<div class="g-2 col-5" th:text="#{book.free.places(${tripFreePlaces})}">9 places free</div>
+					<div class="g-2 col-5"
+						th:text="#{book.free.places(${tripFreePlaces})}">9 places
+						free</div>
 				</div>
 				<div class="g-2 row">
 					<div class="g-2">
-						<input th:value="#{book.next}" class="btn btn-success" type="submit">
+						<input th:value="#{book.next}" class="btn btn-success"
+							type="submit">
 					</div>
 				</div>
 

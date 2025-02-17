@@ -166,6 +166,6 @@ public class UserController {
 		} catch (Exception e) {
 			return "redirect:/users/list?removeerror=" + username;
 		}
-		return "redirect:/users/list";
+		return "redirect:/logout";
 	}
 }

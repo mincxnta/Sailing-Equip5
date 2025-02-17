@@ -12,6 +12,7 @@ import cat.institutmarianao.sailing.validation.groups.OnTripCreate;
 import cat.institutmarianao.sailing.validation.groups.OnTripCreateDate;
 import cat.institutmarianao.sailing.validation.groups.OnTripCreateDeparture;
 import cat.institutmarianao.sailing.validation.groups.OnTripUpdate;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -63,6 +64,7 @@ public class Trip implements Serializable {
 
 	/* Validation */
 	@NotNull(groups = { OnTripCreateDate.class, OnTripUpdate.class })
+	@Future(groups = { OnTripCreateDate.class, OnTripUpdate.class })
 	/* JSON */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SailingApplication.DATE_PATTERN)
 	/* Spring */

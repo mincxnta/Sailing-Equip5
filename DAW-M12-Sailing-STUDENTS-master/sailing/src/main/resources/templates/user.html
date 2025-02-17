@@ -55,13 +55,14 @@
 						<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 					</div>
 				<div class="register">
-				<h1 th:text="#{login.register}">Please, enter your	credentials</h1>
-					<!--<div class="g-2 col-md-8">-->
+				<h1 th:text="${edit} ? #{user.edit} : #{login.register}">Please, enter your credentials</h1>
+					
 					
 
 					<label class="form-label" for="username" th:text="#{user.username}">Username</label>
 					<!--<div class="g-2 col-md-3">-->
-					<div class="input-group"><span class="input-group-text"> <i
+					<div class="input-group py-1">
+					<span class="input-group-text"> <i
 							class="bi bi-person-fill"></i>
 						</span>
 					<input th:if="${edit}" th:field="*{username}" id="username"
@@ -69,15 +70,16 @@
 						th:if="not ${edit}" th:field="*{username}"
 						th:placeholder="#{user.username.placeholder}"
 						th:errorclass="'is-invalid'" id="username" placeholder="Username"
-						class="form-control" /></div>
-					<!--</div>-->
+						class="form-control" />
+					</div>
 
 					<input id="role" type="hidden" th:field="*{role}"
 						th:value="*{role}" sec:authorize="not hasRole('ADMIN')" /> <label
 						th:text="#{user.role}" sec:authorize="hasRole('ADMIN')"
 						class="form-label g-2 col-md-1 p-1" for="role">Role</label>
 
-					<div class="g-2 col-md-3" sec:authorize="hasRole('ADMIN')">
+					
+					<div class="input-group py-1" sec:authorize="hasRole('ADMIN')">
 						<input th:if="${edit}" class="form-control"
 							th:value="#{'user.role.' + *{role}}" readonly="readonly"
 							value="Client" /> <select th:if="not ${edit}" id="role"
@@ -93,32 +95,51 @@
 
 					<label class="form-label" for="password" th:text="#{user.password}">Password</label>
 
-<div class="input-group"><span class="input-group-text"> <i
-							class="bi bi-person-fill"></i>
+<div class="input-group py-1"><span class="input-group-text"> <i
+							class="bi bi-unlock-fill"></i>
 						</span>
 					<input type="password" id="password" class="form-control"
 						th:field="*{password}" th:errorclass="'is-invalid'"
 						th:placeholder="#{user.password.placeholder}"
-						placeholder="Password" /> <label class="form-label" for="verify"
-						th:text="#{user.verify}">Verify</label> <input type="password"
+						placeholder="Password" /> </div>
+						
+						<label class="form-label" for="verify"
+						th:text="#{user.verify}">Verify</label> 
+						<div class="input-group py-1">
+						<span class="input-group-text"> <i
+							class="bi bi-lock-fill"></i>
+						</span>
+						<input type="password"
 						id="verify" th:field="*{verify}" class="form-control"
 						th:errorclass="'is-invalid'"
-						th:placeholder="#{user.verify.placeholder}" placeholder="Verify" />
+						th:placeholder="#{user.verify.placeholder}" placeholder="Verify" /></div>
 
 					
 
 						<label class="form-label" for="fullName"
-							th:text="#{user.fullName}">Full name</label> <input id="fullName"
+							th:text="#{user.fullName}">Full name</label> 
+							<div class="input-group py-1">
+							<span class="input-group-text"> <i
+							class="bi bi-person-vcard-fill"></i>
+						</span>
+							<input id="fullName"
 							th:field="*{fullName}" class="form-control"
 							th:errorclass="'is-invalid'"
 							th:placeholder="#{user.fullName.placeholder}"
-							placeholder="Full name" /> <label
+							placeholder="Full name" /> </div>
+							
+							<label
 							class="form-label g-2 col-md-1 p-1" for="phone"
-							th:text="#{user.phone}">Phone</label> <input id="phone"
-							th:field="*{phone}" class="form-control input-group"
+							th:text="#{user.phone}">Phone</label> 
+							<div class="input-group py-1">
+							<span class="input-group-text"> <i
+							class="bi bi-telephone-fill"></i>
+						</span>
+							<input id="phone"
+							th:field="*{phone}" class="form-control"
 							th:errorclass="'is-invalid'"
 							th:placeholder="#{user.phone.placeholder}"
-							placeholder="333 33 33" />
+							placeholder="333 33 33" /></div>
 
 					
 
