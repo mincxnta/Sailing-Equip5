@@ -6,8 +6,14 @@ header{
 	background-color: #3B82F6;
 }
 
-nav{
-	background-color: #e8d1c1;
+nav {
+  background-color: #e8d1c1;
+  background-image: 
+    url('https://img.freepik.com/free-photo/brown-background-natural-sand-texture_53876-145228.jpg'); /* Usamos una textura de arena sutil */
+  color: black; /* Asegura que el texto sea legible */
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
 }
 
 input[type=submit]{
