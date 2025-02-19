@@ -151,7 +151,7 @@ public class UserController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-		if (!authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
+		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
 			return "redirect:/users/list";
 		}
 

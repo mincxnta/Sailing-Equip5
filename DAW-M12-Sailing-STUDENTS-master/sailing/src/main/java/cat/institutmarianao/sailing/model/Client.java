@@ -28,7 +28,8 @@ public class Client extends User implements Serializable {
 	protected String phone;
 
 	public Client(String username, String password, String fullName, String phone) {
-		super(username, password);
+		super(username);
+		this.password = password;
 		this.fullName = fullName;
 		this.phone = phone;
 		role = Role.CLIENT;

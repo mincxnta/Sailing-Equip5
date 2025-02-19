@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -71,7 +72,7 @@ public class TripController {
 		return 0l;
 	}
 
-	@GetMapping("/book/{trip_type_id}")
+	@RequestMapping(value = "/book/{trip_type_id}", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView bookSelectDate(@PathVariable(name = "trip_type_id", required = true) Long tripTypeId) {
 		// Obtenim l'usuari autenticat
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -94,7 +95,7 @@ public class TripController {
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
 
 		if (result.hasErrors()) {
-			return "book_date";
+			return "forward:/trips/book/" + tripType.getId();
 		}
 
 		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
@@ -187,7 +188,10 @@ public class TripController {
 			modelview.getModelMap().addAttribute("rescheduling", rescheduling);
 			modelview.getModelMap().addAttribute("done", done);
 		} else {
-			modelview.getModelMap().addAttribute("booked_trips", tripService.findAllByClientUsername(performer));
+			List<Trip> trips = tripService.findAllByClientUsername(performer);
+			if (trips != null) {
+				modelview.getModelMap().addAttribute("booked_trips", trips);
+			}
 
 			cancellation.setPerformer(authentication.getName());
 			modelview.getModelMap().addAttribute("cancellation", cancellation);

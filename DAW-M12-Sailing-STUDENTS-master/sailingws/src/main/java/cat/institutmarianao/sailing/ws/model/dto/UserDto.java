@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import cat.institutmarianao.sailing.validation.groups.OnUserCreate;
 import cat.institutmarianao.sailing.ws.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -41,10 +42,9 @@ public abstract class UserDto implements Serializable {
 	protected String username;
 
 	/* Validation */
-	@NotBlank
+	@NotBlank(groups = OnUserCreate.class)
 	/* Lombok */
 	@JsonProperty(access = Access.WRITE_ONLY)
-	@NonNull
 	protected String password;
 
 	/* Validation */

@@ -2,6 +2,7 @@ package cat.institutmarianao.sailing.ws.model;
 
 import java.io.Serializable;
 
+import cat.institutmarianao.sailing.validation.groups.OnUserCreate;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -50,7 +51,7 @@ public abstract class User implements Serializable {
 	protected String username;
 
 	/* Validation */
-	@NotBlank
+	@NotBlank(groups = OnUserCreate.class)
 	/* JPA */
 	protected String password;
 
@@ -58,6 +59,6 @@ public abstract class User implements Serializable {
 	@NotNull
 	/* JPA */
 	@Enumerated(value = EnumType.STRING)
-	@Column(name="role",insertable = false, updatable = false, nullable = false)
+	@Column(name = "role", insertable = false, updatable = false, nullable = false)
 	protected Role role;
 }

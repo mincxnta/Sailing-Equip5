@@ -10,5 +10,5 @@ import cat.institutmarianao.sailing.ws.model.Trip;
 public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificationExecutor<Trip> {
 	List<Trip> findAllByClientUsername(String username);
 
-	List<Trip> findByStatus(Trip.Status status);
+	List<Trip> findByStatusIn(List<Trip.Status> statuses);
 }

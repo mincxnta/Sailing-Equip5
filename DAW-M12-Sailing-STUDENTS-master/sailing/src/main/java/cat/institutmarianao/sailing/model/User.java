@@ -69,11 +69,8 @@ public abstract class User implements UserDetails, Serializable {
 	/* JSON */
 	@JsonInclude(Include.NON_NULL)
 	/* Validation */
-	@NotBlank
+	@NotBlank(groups = OnUserCreate.class)
 	@Size(min = MIN_PASSWORD)
-	@NotNull(groups = OnUserCreate.class)
-	/* Lombok */
-	@NonNull
 	protected String password;
 
 	/* Validation */

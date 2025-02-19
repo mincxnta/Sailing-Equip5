@@ -30,7 +30,7 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public List<Trip> getReservedTrips() {
-		return tripRepository.findByStatus(Trip.Status.RESERVED);
+		return tripRepository.findByStatusIn(List.of(Trip.Status.RESERVED, Trip.Status.RESCHEDULED));
 	}
 
 	@Override

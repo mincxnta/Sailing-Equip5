@@ -66,6 +66,7 @@ public class TripServiceImpl implements TripService {
 
 	@Override
 	public List<Trip> findAll() {
+
 		final String uri = webServiceHost + ":" + webServicePort + TRIPS_FIND_ALL;
 
 		ResponseEntity<Trip[]> response = restTemplate.getForEntity(uri, Trip[].class);
@@ -78,10 +79,13 @@ public class TripServiceImpl implements TripService {
 		UriComponentsBuilder uriTemplate = UriComponentsBuilder.fromHttpUrl(baseUri);
 		Map<String, String> uriVariables = new HashMap<>();
 		uriVariables.put(USERNAME, username);
-
-		ResponseEntity<Trip[]> response = restTemplate
-				.getForEntity(uriTemplate.buildAndExpand(uriVariables).toUriString(), Trip[].class);
-		return Arrays.asList(response.getBody());
+		try {
+			ResponseEntity<Trip[]> response = restTemplate
+					.getForEntity(uriTemplate.buildAndExpand(uriVariables).toUriString(), Trip[].class);
+			return Arrays.asList(response.getBody());
+		} catch (HttpClientErrorException e) {
+			return Collections.emptyList();
+		}
 	}
 
 	@Override

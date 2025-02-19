@@ -22,7 +22,7 @@ public class ClientDto extends UserDto implements Serializable {
 
 	/* Validation */
 	@NotBlank
-	@Size(min=MIN_FULL_NAME, max=MAX_FULL_NAME)
+	@Size(min = MIN_FULL_NAME, max = MAX_FULL_NAME)
 	protected String fullName;
 
 	/* Validation */
@@ -30,7 +30,8 @@ public class ClientDto extends UserDto implements Serializable {
 	protected String phone;
 
 	public ClientDto(String username, String password, String fullName, String phone) {
-		super(username, password);
+		super(username);
+		this.password = password;
 		this.fullName = fullName;
 		this.phone = phone;
 		role = Role.CLIENT;
