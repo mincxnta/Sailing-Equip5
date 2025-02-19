@@ -2,10 +2,9 @@ header {
     position: relative;
     width: 100%;
     height: 150px;
-    /* Ajusta la altura según necesites */
     background-color: #0099ff;
     overflow: hidden;
-    padding: 3rem 0;
+    padding: 1.5rem 0;
 }
 
 svg {
@@ -22,3 +21,8 @@ svg {
     z-index: 1000;
 }
 
+.title a{
+	background-color: transparent;
+	border-color: transparent;
+	color: black;
+}

@@ -1,45 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://wwww.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="https://wwww.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<!--  <head th:replace="~{fragments/template :: head}">-->
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<link rel="stylesheet" th:href="@{/css/main.css}"
-	href="../../static/css/main.css" />
-<link rel="stylesheet" th:href="@{/css/booking.css}"
-	href="../../static/css/booking.css" />
-		<link rel="stylesheet" th:href="@{/css/header.css}"
-	href="../../static/css/header.css" />
-	<script	src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-		<script type="text/javascript" th:src="@{/js/header.js}" src="../static/js/header.js"></script>
-<title>Booking - W&W</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/main.css}" href="../../static/css/main.css" />
+	<link rel="stylesheet" th:href="@{/css/booking.css}" href="../../static/css/booking.css" />
+	<link rel="stylesheet" th:href="@{/css/header.css}" href="../../static/css/header.css" />
+	<script	src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+	<script type="text/javascript" th:src="@{/js/header.js}" src="../static/js/header.js"></script>
+	<script th:src="@{/js/user.js}" src="../static/js/user.js"></script>
+	<title>Booking - W&W</title>
 </head>
 <body>
-	<script th:src="@{/js/user.js}" src="../static/js/user.js"></script>
-
 	<section class="container">
-		<header class="jumbotron" th:replace="~{fragments/template :: header}">
-			Book Date Header </header>
+		<header class="jumbotron" th:replace="~{fragments/template :: header}">Book Date Header </header>
 
-		<nav class="navbar navbar-default"
-			th:replace="~{fragments/template :: navbar}">Navbar</nav>
-
-		<!-- <section
-			th:replace="~{fragments/template :: heading(#{book.heading})}"
-			class="card my-1">Booking</section> -->
+		<nav class="navbar navbar-default" th:replace="~{fragments/template :: navbar}">Navbar</nav>
 
 		<div class=" card my-1">
 			<h5 class="card-header">
@@ -49,70 +31,72 @@
 
 		<form action="#" th:action="@{/trips/book/book_places}"
 			th:object="${trip}" method="post" class="form-horizontal">
-			<div th:if="${#fields.hasAnyErrors() or errors != null}"
-				class="alert alert-danger">
+			<div th:if="${#fields.hasAnyErrors() or errors != null}" class="alert alert-danger">
 				<ul>
 					<li th:each="error : ${#fields.detailedErrors() }"
 						th:text="${error.message}"></li>
 					<li th:each="error : ${errors}" th:text="#{${error}}"></li>
 				</ul>
 			</div>
+			
 			<div class="container col-md-12">
-
 				<div class="g-2 row">
-					<h4 th:text="#{${tripType.title}}" class="g-2 col">1 Hour
-						Sailing Tour</h4>
+					<h4 th:text="#{${tripType.title}}" class="g-2 col">1 Hour Sailing Tour</h4>
 				</div>
+				
 				<div class="g-2 row">
 					<h5
 						th:text="${#numbers.formatDecimal(tripType.price, 1, 'COMMA', 0, 'POINT')+ '€'} + ' - ' + ${tripType.duration} + ' ' + (${tripType.duration==1} ? #{parts.trip.hour} : #{parts.trip.hours})"
 						class="g-2 col">30 € - 1 hour</h5>
 				</div>
+				
 				<div class="g-2 row">
-					<div th:text="#{${tripType.description}}" class="g-2 col">1h
-						Sailing Experience</div>
+					<div th:text="#{${tripType.description}}" class="g-2 col">1h Sailing Experience</div>
 				</div>
+				
 				<div class="mt-4 g-2 departure-details">
 					<h5 class="g-2 col-2" th:text="#{book.date}">Trip date</h5>
-					<i class="icon bi bi-calendar-event-fill"></i><span
-						th:text="${#dates.format(trip.date,'dd-MM-yyyy')}"
-						class="g-2 col-2"></span>
+					<i class="icon bi bi-calendar-event-fill"></i>
+					<span th:text="${#dates.format(trip.date,'dd-MM-yyyy')}" class="g-2 col-2"></span>
 				</div>
+				
 				<div class="mt-4 g-2 row">
 					<h5 class="g-2 col" th:text="#{book.departure}">Departure</h5>
 				</div>
+				
 				<div class="g-2 row">
 					<div class="g-2 col-3">
 						<label for="departure" class="form-label"
 							th:text="#{book.departure.time}">Select trip departure:</label>
 					</div>
 				</div>
+				
 				<div>
 					<div class="g-2 row">
 						<ul th:if="${tripType.category.name() == 'GROUP'}"
 							th:each="place, iStat  : ${freePlaces}">
-							<li class="form-check"><input type="radio"
-								class="form-check-input col-1" name="departure"
+							<li class="form-check">
+								<input type="radio"	class="form-check-input col-1" name="departure"
 								th:id="'departure' + ${iStat.count}"
-								th:value="${#dates.format(place.key,'HH:mm')}"> <label
-								th:text="${#dates.format(place.key,'HH:mm')}"
-								th:for="'departure' + ${iStat.count}" class="btn-radio">>09:30</label>
-								<i class="icon bi bi-person-fill"></i>
-								<span class="col-1" th:text="${place.value + ' places free'}">9
-									places free</span></li>
+								th:value="${#dates.format(place.key,'HH:mm')}"> 
+								
+								<label th:text="${#dates.format(place.key,'HH:mm')}"
+								th:for="'departure' + ${iStat.count}" class="btn-radio">09:30</label>
+								
+								<i class="icon bi bi-person-fill"></i> 
+								<span class="col-1" th:text="#{book.free.places(${place.value})}">9 places free</span>
+							</li>
 						</ul>
 						<input th:if="${tripType.category.name() == 'PRIVATE'}"
 							type="time" name="departure" id="departure"
 							class="form-control form-control-sm w-auto">
 					</div>
-					<input th:value="#{book.next}" class="btn btn-success"
+					<input th:value="#{book.next}" 
 						type="submit"> <input type="hidden"
 						name="${_csrf.parameterName}" value="${_csrf.token}">
 				</div>
 			</div>
 		</form>
-
 	</section>
-
 </body>
 </html>

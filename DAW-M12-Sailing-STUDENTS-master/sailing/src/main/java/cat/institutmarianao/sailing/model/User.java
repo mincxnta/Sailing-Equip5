@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import cat.institutmarianao.sailing.validation.groups.OnUserCreate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -70,6 +71,7 @@ public abstract class User implements UserDetails, Serializable {
 	/* Validation */
 	@NotBlank
 	@Size(min = MIN_PASSWORD)
+	@NotNull(groups = OnUserCreate.class)
 	/* Lombok */
 	@NonNull
 	protected String password;
