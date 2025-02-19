@@ -18,7 +18,12 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/main.css}"
 	href="../../static/css/main.css" />
-<title>Users</title>
+		<link rel="stylesheet" th:href="@{/css/header.css}"
+	href="../../static/css/header.css" />
+	<script	src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+	
+		<script type="text/javascript" th:src="@{/js/header.js}" src="../static/js/header.js"></script>
+<title>Users - W&W</title>
 </head>
 <body>
 	<div th:replace="~{fragments/dialogs :: remove_user_dialog}"></div>
