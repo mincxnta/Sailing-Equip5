@@ -9,8 +9,8 @@ header{
 nav {
   background-color: #e8d1c1;
   background-image: 
-    url('https://img.freepik.com/free-photo/brown-background-natural-sand-texture_53876-145228.jpg'); /* Usamos una textura de arena sutil */
-  color: black; /* Asegura que el texto sea legible */
+    url('https://img.freepik.com/free-photo/brown-background-natural-sand-texture_53876-145228.jpg');
+  color: black; 
   font-weight: bold;
   padding: 10px;
   text-align: center;

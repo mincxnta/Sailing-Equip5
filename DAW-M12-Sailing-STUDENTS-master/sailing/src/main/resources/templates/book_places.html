@@ -28,7 +28,7 @@
 			</h5>
 		</div>
 
-		<form action="#" th:action="@{/trips/book/book_save}" method="post"	th:object="${trip}" class="form-horizontal">
+		<form action="#" th:action="@{/trips/book/book_places/check}" method="post"	th:object="${trip}" class="form-horizontal">
 			<div th:if="${#fields.hasAnyErrors() or errors != null}" class="alert alert-danger">
 				<ul>
 					<li th:each="error : ${#fields.detailedErrors() }" th:text="${error.message}"></li>

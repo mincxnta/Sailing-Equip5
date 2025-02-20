@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -72,12 +71,11 @@ public class TripController {
 		return 0l;
 	}
 
-	@RequestMapping(value = "/book/{trip_type_id}", method = { RequestMethod.GET, RequestMethod.POST })
+	@GetMapping("/book/{trip_type_id}")
 	public ModelAndView bookSelectDate(@PathVariable(name = "trip_type_id", required = true) Long tripTypeId) {
-		// Obtenim l'usuari autenticat
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
 		TripType triptype = tripService.getTripTypeById(tripTypeId);
+
 		Trip trip = new Trip();
 		trip.setTypeId(tripTypeId);
 		trip.setClientUsername(authentication.getName());
@@ -89,14 +87,19 @@ public class TripController {
 		return modelview;
 	}
 
+	@PostMapping("/book/{trip_type_id}")
+	public String bookSelectDateValidation(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
+			BindingResult result, @SessionAttribute("tripType") TripType tripType) {
+		if (result.hasErrors()) {
+			return "book_date";
+		}
+		return "forward:/trips/book/book_departure";
+	}
+
 	@PostMapping("/book/book_departure")
 	public String bookSelectDeparture(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,
 			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
-
-		if (result.hasErrors()) {
-			return "forward:/trips/book/" + tripType.getId();
-		}
 
 		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
 		long maxPlaces = tripType.getMaxPlaces();
@@ -114,6 +117,23 @@ public class TripController {
 		return "book_departure";
 	}
 
+	@PostMapping("/book/book_departure/check")
+	public String bookSelectDepartureValidation(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
+			BindingResult result, @SessionAttribute("tripType") TripType tripType,
+			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
+		if (result.hasErrors() || trip.getDeparture() == null) {
+			return "book_departure";
+		}
+		return "forward:/trips/book/book_places";
+	}
+
+	@GetMapping("/book/book_departure/check")
+	public String bookSelectDepartureError(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
+			BindingResult result, @SessionAttribute("tripType") TripType tripType,
+			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
+		return "book_departure";
+	}
+
 	@PostMapping("/book/book_places")
 	public String bookSelectPlaces(@Validated(OnTripCreateDeparture.class) @ModelAttribute("trip") Trip trip,
 			BindingResult result, @SessionAttribute("tripType") TripType tripType,
@@ -122,6 +142,7 @@ public class TripController {
 
 		List<BookedPlace> bookedPlaces = tripService.findBookedPlacesByTripIdAndDate(tripType.getId(), trip.getDate());
 		long reservedPlaces = 0;
+
 		for (BookedPlace bookedPlace : bookedPlaces) {
 			if (bookedPlace.getDeparture().equals(trip.getDeparture())) {
 				reservedPlaces = bookedPlace.getBookedPlaces();
@@ -132,10 +153,23 @@ public class TripController {
 		tripFreePlaces = tripType.getMaxPlaces() - reservedPlaces;
 		modelMap.addAttribute("tripFreePlaces", tripFreePlaces);
 
-		if (result.hasErrors()) {
-			return "book_departure";
-		}
+		return "book_places";
+	}
 
+	@PostMapping("/book/book_places/check")
+	public String bookSelectPlacesValidation(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
+			BindingResult result, @SessionAttribute("tripType") TripType tripType,
+			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
+		if (result.hasErrors()) {
+			return "book_places";
+		}
+		return "forward:/trips/book/book_save";
+	}
+
+	@GetMapping("/book/book_places/check")
+	public String bookSelectPlacesError(@Validated(OnTripCreateDate.class) @ModelAttribute("trip") Trip trip,
+			BindingResult result, @SessionAttribute("tripType") TripType tripType,
+			@SessionAttribute("freePlaces") Map<Date, Long> freePlaces, ModelMap modelMap) {
 		return "book_places";
 	}
 
@@ -145,10 +179,6 @@ public class TripController {
 			@SessionAttribute("tripFreePlaces") Long tripFreePlaces, ModelMap modelMap, SessionStatus sessionStatus) {
 		List<String> errors = new ArrayList<>();
 		try {
-
-			if (result.hasErrors()) {
-				return "book_places";
-			}
 			tripService.save(trip);
 			sessionStatus.setComplete();
 			return "redirect:/trips/booked";
@@ -161,11 +191,9 @@ public class TripController {
 
 	@GetMapping("/booked")
 	public ModelAndView booked() {
-		// Obtenim l'usuari autenticat
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-		// Creem mapa amb el tripTypeId i el seu TripType corresponent
 		List<TripType> allTripTypes = tripService.getAllTripTypes();
 		Map<Long, TripType> tripTypes = new HashMap<>();
 		for (TripType tripType : allTripTypes) {
@@ -173,8 +201,6 @@ public class TripController {
 		}
 
 		ModelAndView modelview = new ModelAndView("trips");
-
-		// Inicialitzar accions
 		Cancellation cancellation = new Cancellation();
 		Done done = new Done();
 		Rescheduling rescheduling = new Rescheduling();
@@ -182,7 +208,6 @@ public class TripController {
 
 		if (authorities.stream().anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))) {
 			modelview.getModelMap().addAttribute("booked_trips", tripService.findAll());
-
 			done.setPerformer(performer);
 			rescheduling.setPerformer(performer);
 			modelview.getModelMap().addAttribute("rescheduling", rescheduling);
@@ -196,8 +221,8 @@ public class TripController {
 			cancellation.setPerformer(authentication.getName());
 			modelview.getModelMap().addAttribute("cancellation", cancellation);
 		}
-		modelview.getModelMap().addAttribute("tripTypes", tripTypes);
 
+		modelview.getModelMap().addAttribute("tripTypes", tripTypes);
 		return modelview;
 	}
 
@@ -206,7 +231,6 @@ public class TripController {
 		try {
 			cancellation.setDate(new Date());
 			tripService.track(cancellation);
-
 			return "redirect:/trips/booked";
 		} catch (HttpClientErrorException.UnprocessableEntity e) {
 			redirectAttributes.addFlashAttribute("error", "trips.cancellation.error");
@@ -222,7 +246,6 @@ public class TripController {
 			return "redirect:/trips/booked";
 		} catch (HttpClientErrorException.Forbidden e) {
 			redirectAttributes.addFlashAttribute("error", "trips.done.error");
-
 			return "redirect:/trips/booked";
 		}
 	}
@@ -240,7 +263,6 @@ public class TripController {
 			} else if (e.getMessage().contains("newDeparture")) {
 				redirectAttributes.addFlashAttribute("error", "trips.reschedule.departure.error");
 			}
-
 			return "redirect:/trips/booked";
 		}
 	}
@@ -251,6 +273,5 @@ public class TripController {
 		modelMap.addAttribute("tripId", id);
 		modelMap.addAttribute("tracking", tracking);
 		return "fragments/dialogs :: tracking_dialog_body";
-
 	}
 }

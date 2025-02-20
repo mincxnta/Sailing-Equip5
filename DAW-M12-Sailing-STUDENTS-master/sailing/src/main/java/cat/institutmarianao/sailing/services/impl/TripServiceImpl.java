@@ -33,7 +33,6 @@ import jakarta.validation.constraints.NotNull;
 @Service
 public class TripServiceImpl implements TripService {
 	private static final String USERNAME = "username";
-	// Long?
 	private static final String TRIP_ID = "tripId";
 	private static final String TRIP_TYPE_ID = "trip_type_id";
 	private static final String DATE = "date";
@@ -44,10 +43,8 @@ public class TripServiceImpl implements TripService {
 
 	private static final String TRIPS_FIND_TRACKING_BY_ID = TRIPS_SERVICE + "/find/tracking/by/id/{" + TRIP_ID + "}";
 	private static final String TRIPS_FIND_ALL = TRIPS_SERVICE + "/find/all";
-	private static final String TRIPS_FIND_ALL_BY_CLIENT_USERNAME = TRIPS_SERVICE + "/find/all/by/client/username/{"
-			+ USERNAME + "}";
-	private static final String TRIPS_FIND_BOOKED_PLACES_BY_TRIP_TYPE_ID_DATE = TRIPS_SERVICE + "/bookedPlaces/{"
-			+ TRIP_TYPE_ID + "}/{" + DATE + "}";
+	private static final String TRIPS_FIND_ALL_BY_CLIENT_USERNAME = TRIPS_SERVICE + "/find/all/by/client/username/{" + USERNAME + "}";
+	private static final String TRIPS_FIND_BOOKED_PLACES_BY_TRIP_TYPE_ID_DATE = TRIPS_SERVICE + "/bookedPlaces/{" + TRIP_TYPE_ID + "}/{" + DATE + "}";
 	private static final String TRIPS_SAVE = TRIPS_SERVICE + "/save";
 	private static final String TRIPS_SAVE_ACTION = TRIPS_SERVICE + "/save/action";
 

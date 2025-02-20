@@ -29,7 +29,7 @@
 			</h5>
 		</div>
 
-		<form th:action="@{/trips/book/book_departure}" method="post"
+		<form th:action="@{/trips/book/{tripTypeId}(tripTypeId=${tripType.id})}"  method="post"
 			class="form-horizontal" th:object="${trip}">
 			
 			<div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">

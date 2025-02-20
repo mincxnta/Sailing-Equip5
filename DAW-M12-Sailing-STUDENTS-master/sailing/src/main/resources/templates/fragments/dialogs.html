@@ -22,7 +22,6 @@
 </head>
 
 <body>
-	<!-- Remove user dialog -->
 	<button type="button" class="btn btn-danger" data-bs-toggle="modal"
 		data-bs-target="#removeUserDialog" data-bs-username="username">Remove
 		user dialog</button>
@@ -101,7 +100,6 @@
 		<div id="cancelTripDialog" class="modal fade">
 
 			<div class="modal-dialog">
-<!-- Arreglar esto -->
 				<form action="#" th:action="@{/trips/cancel}" method="post"
 					th:object="${cancellation}">
 
