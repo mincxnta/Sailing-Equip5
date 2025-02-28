@@ -80,7 +80,6 @@ public class WebSecurityConfiguration {
 					return execution.execute(request, body);
 				}).build();
 	}
-	// TODO Hacer ClientHttpRequestInterceptor propio y cuando caduque refrescar
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
